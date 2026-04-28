@@ -861,27 +861,37 @@ function runWeek() {
     // ── DESISTÊNCIA / EXPULSÃO ──
     let narrativeExtra = "";
     if (exitsCounter < 2 && week > 1 && actives.length > 5) {
-        const exitChance = 0.12 + (week * 0.03);
-        if (Math.random() < exitChance) {
-            const azarado = rnd(actives);
-            const isExpulsao = Math.random() > 0.55;
-            const motivo = isExpulsao ? rnd(kickReasons) : rnd(quitReasons);
-            const tipoEvento = isExpulsao ? "FOI EXPULSO(A)" : "DESISTIU";
-            const emoji = isExpulsao ? "🚨" : "😢";
-            const cls = isExpulsao ? "expulsao" : "desistencia";
-            narrativeExtra = `<div class="exit-banner ${cls}">${emoji} <b>${azarado.name} ${tipoEvento} DO PROGRAMA!</b><br>
-                <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${motivo}</span></div>`;
-            lastWeekExit = { name: azarado.name, tipo: tipoEvento, emoji, motivo, cls };
-            azarado.active = false;
-            while (azarado.history.length < week-1) azarado.history.push("-");
-            azarado.history.push("DES");
-            elimOrder.push(azarado);
-            exitsCounter++;
-            actives = participants.filter(p => p.active);
-            if (actives.length <= 3) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop3Final(actives); }
-            if (actives.length === 4) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop4Week(actives); }
-        }
+    const exitChance = Math.min(0.25, 0.10 + (week * 0.025));
+
+    const teveExitRecente = lastWeekExit && lastWeekExit.week >= week - 1;
+    if (teveExitRecente) return;
+
+    if (Math.random() < exitChance) {
+        const azarado = rnd(actives);
+        const isExpulsao = Math.random() > 0.65; // expulsão mais rara
+        const motivo = isExpulsao ? rnd(kickReasons) : rnd(quitReasons);
+        const tipoEvento = isExpulsao ? "FOI EXPULSO(A)" : "DESISTIU";
+        const emoji = isExpulsao ? "🚨" : "😢";
+        const cls = isExpulsao ? "expulsao" : "desistencia";
+
+        narrativeExtra = `<div class="exit-banner ${cls}">${emoji} <b>${azarado.name} ${tipoEvento} DO PROGRAMA!</b><br>
+            <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${motivo}</span></div>`;
+
+        lastWeekExit = { name: azarado.name, tipo: tipoEvento, emoji, motivo, cls, week };
+
+        azarado.active = false;
+        while (azarado.history.length < week-1) azarado.history.push("-");
+        azarado.history.push("DES");
+
+        elimOrder.push(azarado);
+        exitsCounter++;
+
+        actives = participants.filter(p => p.active);
+
+        if (actives.length <= 3) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop3Final(actives); }
+        if (actives.length === 4) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop4Week(actives); }
     }
+}
 
     // ── Prova do Líder ──
     const provaLiderNome = rnd(provaLiderNames);
