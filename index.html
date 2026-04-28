@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBB26 Simulator</title>
+    <style>
+        :root {
+            --primary:#00a0ff;--secondary:#32d951;--danger:#ff4757;
+            --dark:#2f3542;--light:#f1f2f6;--gold:#ffa502;
+            --anjo:#7bed9f;--salvo:#a2d2ff;--imu:#00cec9;
+            --pipoca:#ff9ff3;--camarote:#ff9f43;--veterano:#54a0ff;
+            --vip:#f6e58d;--xepa:#dfe6e9;--monstro:#6c5ce7;
+        }
+        body { font-family:'Segoe UI',sans-serif; background:url('https://img.cdndsgni.com/preview/10884475.jpg') no-repeat center center fixed; background-size:cover; margin:0; padding-bottom:50px; }
+        body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(241,242,246,0.94); z-index:-1; }
+        .page { display:none; padding:20px; max-width:1100px; margin:0 auto; }
+        .page.active { display:block; }
+        .card { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.15); margin-bottom:20px; }
+        button { padding:12px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s; color:white; background:var(--primary); }
+        button.sec { background:var(--secondary); }
+        button.alt { background:var(--dark); }
+        .cast-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:15px; }
+        .p-card { border:1px solid #eee; padding:12px; border-radius:8px; background:#fafafa; text-align:center; }
+        select { width:100%; padding:8px; border-radius:6px; border:1px solid #ddd; margin-top:5px; background:white; }
+        #console { background:#111; color:#eee; padding:25px; border-radius:8px; height:350px; overflow-y:auto; font-family:'Consolas',monospace; border-left:6px solid var(--primary); font-size:0.95em; line-height:1.5; }
+        .log-item { border-bottom:1px solid #222; padding:8px 0; }
+        .narrative-box { background:#fff; border-left:5px solid var(--primary); padding:20px; margin-bottom:20px; border-radius:4px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        .alliance-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:12px; }
+        .alliance-section { margin-bottom:18px; }
+        .alliance-section h4 { margin:0 0 8px 0; padding:8px 12px; border-radius:6px; font-size:0.95em; }
+        .alliance-section h4.romance-title { background:#fdeef5; color:#c0392b; border-left:4px solid #e91e8c; }
+        .alliance-section h4.rival-title   { background:#fdeaea; color:#c0392b; border-left:4px solid var(--danger); }
+        .alliance-section h4.xepavip-title { background:#ffeaa7; color:#b7950b; border-left:4px solid var(--gold); }
+        .alliance-section h4.gang-title    { background:#eee8ff; color:#6c5ce7; border-left:4px solid #6c5ce7; }
+        .alliance-section h4.favor-title   { background:#e8f9e8; color:#27ae60; border-left:4px solid #27ae60; }
+        .alliance-card { background:white; padding:14px; border-radius:8px; border:1px solid #ddd; border-top:4px solid var(--primary); font-size:0.9em; }
+        .alliance-card.rival   { border-top-color:var(--danger); }
+        .alliance-card.romance { border-top-color:#e91e8c; }
+        .alliance-card.vip-card    { border-top-color:var(--gold); background:#fffde7; }
+        .alliance-card.xepa-card   { border-top-color:#636e72; background:#f5f6fa; }
+        .alliance-card.monstro-card{ border-top-color:var(--monstro); background:#f3f0ff; }
+        .alliance-card.solo-card   { border-top-color:#e17055; background:#fff5f2; }
+        .alliance-card.muro-card   { border-top-color:#b2bec3; background:#f5f6fa; }
+        .alliance-card.fav-card    { border-top-color:#27ae60; background:#eafaf1; }
+        .alliance-card.vil-card    { border-top-color:#8e44ad; background:#f9f0ff; }
+        table { width:100%; border-collapse:collapse; background:white; font-size:11px; text-align:center; margin-top:10px; }
+        th,td { border:1px solid #ddd; padding:6px; }
+        .name-cell { text-align:left; padding-left:10px; font-weight:bold; min-width:120px; }
+        .border-Pipoca  { border-left:8px solid var(--pipoca); }
+        .border-Camarote{ border-left:8px solid var(--camarote); }
+        .border-Veterano{ border-left:8px solid var(--veterano); }
+        .st-LID   { background:#4834d4; color:white; font-weight:bold; }
+        .st-ANJO  { background:var(--anjo); color:#000; }
+        .st-IMU   { background:var(--imu); color:#000; font-weight:bold; }
+        .st-PAR   { background:#ffa502; color:black; }
+        .st-ELIM  { background:#ff4757; color:white; font-weight:bold; font-size:0.82em; }
+        .st-RET   { background:#00b894; color:white; font-weight:bold; font-size:0.82em; }
+        .st-DES   { background:#000; color:#fff; font-weight:bold; }
+        .st-SALVO { background:var(--salvo); color:#000; font-weight:bold; }
+        .st-SAFE  { background:#dfe6e9; color:#444; }
+        .st-WIN   { background:var(--gold); color:#000; font-weight:bold; }
+        .st-FIN   { background:#eee; color:#444; }
+        .confessionary-text { font-style:italic; color:#555; background:#f9f9f9; padding:10px; border-radius:5px; margin-top:5px; display:block; border-left:3px solid #ccc; font-size:0.85em; }
+        .rank-badge { display:inline-block; padding:4px 10px; border-radius:4px; font-size:0.8em; margin-left:5px; color:white; font-weight:bold; }
+        .bg-fav { background:#27ae60; }
+        .bg-vil { background:#8e44ad; }
+        .final-banner { background:linear-gradient(135deg,#f6d365,#fda085); color:white; padding:20px; border-radius:12px; text-align:center; font-size:1.4em; font-weight:bold; margin-bottom:20px; }
+        .winner-screen { background:linear-gradient(135deg,#ffecd2,#fcb69f,#ffecd2); padding:40px; border-radius:20px; text-align:center; margin-bottom:30px; box-shadow:0 10px 40px rgba(255,165,0,0.4); }
+        .config-label { font-weight:bold; font-size:0.9em; margin-bottom:3px; display:block; }
+        .discordia-box { background:linear-gradient(135deg,#2d3436,#636e72); color:white; padding:16px 20px; border-radius:10px; margin:12px 0; }
+        .discordia-apontado { background:#d63031; color:white; padding:8px 14px; border-radius:8px; margin-top:10px; font-weight:bold; display:inline-block; }
+        .exit-banner { padding:16px 20px; border-radius:10px; margin-bottom:15px; font-size:1.05em; }
+        .exit-banner.expulsao  { background:#c0392b; color:white; }
+        .exit-banner.desistencia { background:#2d3436; color:white; }
+        .fake-paredao-banner { background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:white; padding:20px; border-radius:12px; text-align:center; margin-bottom:15px; font-size:1.1em; font-weight:bold; }
+    </style>
+</head>
+<body>
+
+<section id="page-setup" class="page active">
+    <h1>👁️ BBB26 - Cadastro de Elenco</h1>
+    <div class="card">
+        <textarea id="input-cast" style="width:100%;height:120px;border-radius:8px;padding:10px;" placeholder="Sugerir nomes ou cole os seus..."></textarea>
+        <div style="margin-top:10px;">
+            <button onclick="randomizeCast()" class="alt">🎲 Sugerir 20 Nomes</button>
+            <button onclick="goToDetails()" class="sec">Próximo ➔</button>
+        </div>
+    </div>
+</section>
+
+<section id="page-details" class="page">
+    <h2>🏷️ Configurar Grupos</h2>
+    <div class="card">
+        <div style="margin-bottom:20px;display:flex;gap:10px;">
+            <button onclick="autoAssign()" class="alt">⚡ Aleatório</button>
+            <button onclick="startSeason()" class="sec">Iniciar! 🚀</button>
+        </div>
+        <div id="cast-details-list" class="cast-grid"></div>
+    </div>
+</section>
+
+<section id="page-sim" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 id="week-display">Semana 1</h2>
+        <div id="season-badges"></div>
+    </div>
+
+    <div class="card" id="config-panel">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:15px;">
+            <div>
+                <span class="config-label">😇 ANJO:</span>
+                <select id="config-anjo">
+                    <option value="imuniza">Imuniza Alguém</option>
+                    <option value="auto">Autoimune</option>
+                </select>
+                <small style="color:#888;font-size:0.75em;">Sem Anjo no TOP 5</small>
+            </div>
+            <div>
+                <span class="config-label">🎲 DINÂMICA ALEATÓRIA:</span>
+                <select id="config-dinamica">
+                    <option value="nenhum">Nenhuma (Casa indica 2ª extra)</option>
+                    <option value="bigfone-atende">Big Fone — vai direto</option>
+                    <option value="bigfone-indica">Big Fone — indica alguém</option>
+                    <option value="prova-lider">Perdedor da Prova do Líder</option>
+                    <option value="duelo">Duelo de Risco</option>
+                </select>
+            </div>
+            <div>
+                <span class="config-label">🏠 INDICAÇÃO DA CASA:</span>
+                <select id="config-extra">
+                    <option value="1">1 mais votado</option>
+                    <option value="2">2 mais votados</option>
+                </select>
+            </div>
+            <div>
+                <span class="config-label">🔄 CONTRAGOLPE:</span>
+                <select id="config-contra">
+                    <option value="lider">Indicado do Líder puxa</option>
+                    <option value="casa">Mais votado da Casa puxa</option>
+                    <option value="dinamica">Pessoa da Dinâmica puxa</option>
+                </select>
+            </div>
+            <div>
+                <span class="config-label">⚡ PAREDÃO FALSO MANUAL:</span>
+                <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;">
+                    <input type="checkbox" id="check-fake-paredao" style="width:20px;height:20px;cursor:pointer;accent-color:#6c5ce7;">
+                    <span style="font-size:0.9em;font-weight:bold;color:#6c5ce7;">Esta semana é Paredão Falso</span>
+                </label>
+                <small style="color:#888;font-size:0.75em;">Marque antes de simular a semana</small>
+            </div>
+        </div>
+        <button id="btn-run" onclick="runWeek()" class="sec" style="width:100%;margin-top:20px;">SIMULAR SEMANA</button>
+    </div>
+
+    <div id="narrative-area"></div>
+    <div id="console"></div>
+
+    <div id="votos-container" style="display:none;margin-top:10px;">
+        <div class="card">
+            <h4>🧾 Confessionário & Justificativas</h4>
+            <div id="votos-lista" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;"></div>
+        </div>
+    </div>
+
+    <div id="summary-area" style="display:none;margin-top:20px;">
+        <div class="card">
+            <h3>🤝 Mapa de Afinidades e Rivalidades</h3>
+            <div id="alliance-container"></div>
+        </div>
+        <div id="live-table-container" style="overflow-x:auto;"></div>
+        <button id="btn-next" onclick="prepareNextWeek()" class="alt" style="width:100%;margin-top:15px;">PRÓXIMA SEMANA ➔</button>
+    </div>
+</section>
+
+<section id="page-final" class="page">
+    <div class="card">
+        <div class="winner-screen">
+            <div style="font-size:3em;margin-bottom:10px;">🏆</div>
+            <div style="font-size:1.1em;letter-spacing:3px;text-transform:uppercase;opacity:0.8;margin-bottom:10px;">Campeão(ã) do BBB 26</div>
+            <h2 id="winner-name" style="font-size:3.5em;color:#b8600a;margin:10px 0;text-shadow:2px 2px 0 rgba(255,255,255,0.5);"></h2>
+            <div id="final-podium" style="font-size:1.3em;margin-top:20px;"></div>
+        </div>
+        <div id="final-table-container" style="overflow-x:auto;"></div>
+        <button onclick="location.reload()" class="alt" style="margin-top:20px;width:100%;">🔄 Nova Temporada</button>
+    </div>
+</section>
+
+<script>
+// ══════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════════
+let participants = [];
+let week = 1;
+let elimOrder = [];
+let exitsCounter = 0;
+let lastWeekExit = null;
+let publicFavoriteId = null;
+let publicVillainId = null;
+let favChangedWeek = 0;    // semana em que o favorito mudou pela última vez
+let vilChangedWeek = 0;
+let fakeParedaoWeek = 0;
+let fakeParedaoUsed = false;
+let fakeParedaoVitima = null; // guarda quem foi "eliminado" no paredão falso
+let activeGangIndices = [];   // quais grupos do pool estão ativos nesta temporada
+
+const rooms  = ["Lolipop","Submarino","Sertão"];
+const groups = ["Pipoca","Camarote","Veterano"];
+
+// Categorias especiais de jogo
+const GANG_SOLO = -1;   // joga sozinho
+const GANG_MURO = -2;   // em cima do muro
+
+const gangPool = [
+    "Grupo da Piscina","Grupo da Academia","Grupo da Xepa",
+    "Grupo Lollipop","Grupo Sertão","Grupo Submarino",
+    "Grupo Pipoca","Grupo Veterano","Grupo Camarote"
+];
+const gangPoolColors = [
+    "#6c5ce7","#e17055","#00b894","#9b59b6","#e67e22",
+    "#2980b9","#fd79a8","#27ae60","#f39c12"
+];
+
+// ══════════════════════════════════════════════════════
+// LISTAS DE TEXTO
+// ══════════════════════════════════════════════════════
+const provaLiderNames = [
+    "Prova da Resistência Total","Prova da Força Bruta","Prova da Habilidade Extrema",
+    "Prova da Piscina Gelada","Prova do Equilíbrio","Prova da Memória Afetiva",
+    "Prova do Azar e da Sorte","Prova da Velocidade","Prova da Coragem",
+    "Prova da Virada de Mesa","Prova do Labirinto","Prova da Torcida"
+];
+const provaAnjoNames = [
+    "Prova da Caixinha da Sorte","Prova do Dado Mágico","Prova do Equilíbrio do Anjo",
+    "Prova da Velocidade Sagrada","Prova da Sortuda","Prova da Memória do Bem"
+];
+const kickReasons = [
+    "Acertou um chinelo no rosto de um colega durante uma discussão.",
+    "Empurrou um participante na beira da piscina com agressividade.",
+    "Infringiu uma regra contratual grave.",
+    "Destruiu parte do cenário da casa em um surto de raiva.",
+    "Fez ameaças físicas diretas que comprometeram a segurança.",
+    "Agrediu verbalmente um colega com palavras de cunho discriminatório.",
+    "Foi flagrado(a) planejando sabotar câmeras de segurança.",
+    "Entrou em uma briga corporal no quarto que precisou de intervenção.",
+    "Atirou utensílios de cozinha durante uma discussão por comida."
+];
+const quitReasons = [
+    "Não suportou a saudade da família e dos filhos.",
+    "Entrou em crise de pânico após o Jogo da Discórdia.",
+    "Apertou o botão por medo de ser rejeitado(a) no Paredão.",
+    "Sentiu que sua saúde mental estava no limite.",
+    "Não aguentou a restrição alimentar severa da Xepa.",
+    "Chorou a noite toda e disse que não fazia mais sentido ficar.",
+    "Teve um colapso emocional após uma prova de resistência de 12 horas.",
+    "Não conseguiu dormir por dias e pediu ajuda médica que levou à desistência.",
+    "Sofreu um ataque de ansiedade durante a festa e não quis mais continuar."
+];
+const elimReasons = [
+    "Cancelado(a) no Twitter por falas problemáticas.",
+    "Considerado(a) a maior planta da edição.",
+    "Caiu no paredão contra os favoritos.",
+    "Fez um jogo sujo e o público não perdoou.",
+    "Brigou feio por causa de comida na Xepa.",
+    "Ficou em cima do muro e perdeu a simpatia da galera.",
+    "Fez aliança com os vilões da edição e pagou o preço.",
+    "Teve uma postura arrogante que irritou o Brasil inteiro.",
+    "Atacou o favorito do público e se tornou o alvo número um.",
+    "Virou meme negativo nas redes sociais por uma fala polêmica.",
+    "O edit nunca foi favorável e o público mal o(a) conhecia.",
+    "Perdeu a simpatia depois de trair o melhor amigo dentro do jogo."
+];
+const confessionalPhrases = [
+    "Infelizmente não tive outra opção.",
+    "Essa pessoa não ajuda na casa e o clima está ficando pesado.",
+    "Meu voto hoje é por estratégia, não quero ir com meus aliados.",
+    "Vou votar em quem já votou em mim.",
+    "Preciso me proteger agora, esse voto é puramente estratégico.",
+    "Não confio mais nessa pessoa desde a última semana.",
+    "Meu coração diz uma coisa e o jogo diz outra, mas o jogo fala mais alto.",
+    "É o menor mal nesse momento."
+];
+const confessionalPhrasesRival = [
+    "Essa pessoa é minha rival aqui dentro. Não tem outra saída.",
+    "Enquanto essa pessoa estiver aqui, minha posição é frágil.",
+    "É a pessoa que mais me incomoda nessa casa. Voto sem hesitar.",
+    "Essa é uma eliminação necessária para o meu jogo. Simples assim.",
+    "Não existe paz enquanto essa pessoa estiver no jogo."
+];
+const confessionalPhrasesBetrayal = [
+    "Me perdoa, mas o jogo é assim... traição faz parte.",
+    "Eu sei que vou ter que explicar esse voto lá fora. O jogo pediu.",
+    "Não queria fazer isso, mas precisei me salvar.",
+    "Jogo é jogo. Sinto muito."
+];
+const monstroPunishments = [
+    "usar uma fantasia de peixe por 24 horas",
+    "dormir no chão da sala por 3 dias",
+    "não poder usar o banheiro do VIP pela semana toda",
+    "comer apenas Xepa por toda a semana",
+    "carregar um peso de 5kg em cada tornozelo por 12 horas",
+    "só poder falar sussurrando por 24 horas",
+    "usar uma fantasia de alface e atender o Big Fone se tocar",
+    "passar a noite toda acordado(a) em plantão na cozinha"
+];
+const vipDescriptions = [
+    "churrasco, camarão grelhado e drinks especiais 🥩🍤",
+    "massas importadas, fondue e vinhos selecionados 🍷🫕",
+    "sushi, temaki e cerveja gelada à vontade 🍣🍺",
+    "costela no bafo, tutu de feijão e torta de morango 🍖🍰"
+];
+const xepaDescriptions = [
+    "arroz empapado, feijão ralo e pão dormido 🍚",
+    "apenas macarrão instantâneo e água com gás 🍜",
+    "ração básica: pão com margarina e chá de erva-doce 🫖",
+    "sobras requentadas do VIP de anteontem 🥡"
+];
+const discordiaTopics = [
+    "Quem aqui joga mais sujo?",
+    "Quem não merece estar no BBB?",
+    "Quem é a maior planta da casa?",
+    "Quem é o maior hipócrita aqui dentro?",
+    "Quem você menos confiaria dentro da casa?",
+    "Quem age diferente na frente das câmeras?",
+    "Quem é o maior dedo-duro da edição?",
+    "Quem tem o jogo mais armão?",
+    "Quem mais usa emoção no lugar de estratégia?",
+    "Quem você acha que não tem caráter aqui?"
+];
+const namesBank = ["Lucas Andrade","Mariana Ferreira","Rafael Costa","Juliana Martins","Bruno Oliveira","Camila Rocha","Felipe Almeida","Beatriz Souza","Gustavo Ribeiro","Larissa Carvalho","Eduardo Gomes","Renata Barros","Tiago Nascimento","Aline Teixeira","Vinícius Pires","Patrícia Cardoso","Daniel Moreira","Fernanda Batista","Rodrigo Lopes","Vanessa Duarte"];
+
+// ══════════════════════════════════════════════════════
+// UTILIDADES
+// ══════════════════════════════════════════════════════
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function getGroupColor(g) {
+    if (g === 'Pipoca') return 'var(--pipoca)';
+    if (g === 'Camarote') return 'var(--camarote)';
+    if (g === 'Veterano') return 'var(--veterano)';
+    return '#ccc';
+}
+function gangLabel(gangIdx) {
+    if (gangIdx === GANG_SOLO) return '🎯 Solo';
+    if (gangIdx === GANG_MURO) return '🪨 Muro';
+    return gangPool[gangIdx] || '?';
+}
+function gangColor(gangIdx) {
+    if (gangIdx === GANG_SOLO) return '#e17055';
+    if (gangIdx === GANG_MURO) return '#b2bec3';
+    return gangPoolColors[gangIdx] || '#aaa';
+}
+
+// Altera relação com amortecimento para relacionamentos estabelecidos
+function changeRelation(p, targetId, delta) {
+    const cur = p.relations[targetId] || 0;
+    const isStable = Math.abs(cur) > 40;
+    const effective = isStable ? delta * 0.4 : delta; // relacionamentos estáveis mudam mais devagar
+    p.relations[targetId] = cur + effective;
+}
+
+function getConfessionalPhrase(voter, target) {
+    const rel = voter.relations[target.id] || 0;
+    if (rel > 20) return rnd(confessionalPhrasesBetrayal);
+    if (rel < -15) return rnd(confessionalPhrasesRival);
+    return rnd(confessionalPhrases);
+}
+
+// ══════════════════════════════════════════════════════
+// GRUPOS / GANGS
+// ══════════════════════════════════════════════════════
+function initGroups(pList) {
+    // Escolhe 2 ou 3 grupos ativos da temporada
+    const shuffled = [...gangPool.keys()].sort(() => 0.5 - Math.random());
+    const numGroups = 2 + Math.floor(Math.random() * 2); // 2 ou 3
+    activeGangIndices = shuffled.slice(0, numGroups);
+
+    pList.forEach((p, i) => {
+        const r = Math.random();
+        if (r < 0.65) {
+            // entra num grupo ativo
+            p.gang = activeGangIndices[i % activeGangIndices.length];
+        } else if (r < 0.82) {
+            p.gang = GANG_MURO; // em cima do muro
+        } else {
+            p.gang = GANG_SOLO; // joga solo
+        }
+    });
+
+    // Bônus de relação para membros do mesmo grupo
+    pList.forEach(p => {
+        if (p.gang < 0) return;
+        pList.forEach(o => {
+            if (o.gang === p.gang && o.id !== p.id) {
+                p.relations[o.id] = (p.relations[o.id] || 0) + 18;
+            }
+        });
+    });
+}
+
+// Dinâmica semanal dos grupos
+function updateGroupDynamics(actives) {
+    let log = "";
+    const activeGroups = [...new Set(actives.filter(p => p.gang >= 0).map(p => p.gang))];
+
+    actives.forEach(p => {
+        const r = Math.random();
+        if (p.gang >= 0) {
+            if (r < 0.05) {
+                // Racha: vai jogar solo
+                log += `💔 <b>${p.name}</b> rachou com o grupo e decidiu jogar solo! `;
+                actives.filter(o => o.gang === p.gang).forEach(o => { changeRelation(p, o.id, -15); });
+                p.gang = GANG_SOLO;
+            } else if (r < 0.09 && activeGroups.length > 1) {
+                // Troca de lado!
+                const otherGroups = activeGroups.filter(g => g !== p.gang);
+                const newGang = otherGroups[Math.floor(Math.random() * otherGroups.length)];
+                log += `🔄 <b>${p.name}</b> trocou de lado e se juntou ao ${gangPool[newGang]}! `;
+                actives.filter(o => o.gang === p.gang).forEach(o => { changeRelation(p, o.id, -20); changeRelation(o, p.id, -20); });
+                p.gang = newGang;
+                actives.filter(o => o.gang === newGang).forEach(o => { changeRelation(p, o.id, 15); });
+            }
+        } else if (p.gang === GANG_SOLO && r < 0.08 && activeGroups.length > 0) {
+            const newGang = activeGroups[Math.floor(Math.random() * activeGroups.length)];
+            p.gang = newGang;
+            log += `🤝 <b>${p.name}</b> (solo) decidiu se aliar ao ${gangPool[newGang]}! `;
+        } else if (p.gang === GANG_MURO && r < 0.12 && activeGroups.length > 0) {
+            const newGang = activeGroups[Math.floor(Math.random() * activeGroups.length)];
+            p.gang = newGang;
+            log += `🎯 <b>${p.name}</b> saiu do muro e escolheu um lado: ${gangPool[newGang]}! `;
+        }
+    });
+    return log;
+}
+
+// ══════════════════════════════════════════════════════
+// OPINIÃO PÚBLICA (favorito / vilão)
+// ══════════════════════════════════════════════════════
+function initPublicOpinion(pList) {
+    const sorted = [...pList].sort((a,b) => b.popularity - a.popularity);
+    publicFavoriteId = sorted[0].id;
+    const vilSorted = [...pList].sort((a,b) => b.rejection - a.rejection);
+    publicVillainId = vilSorted[0].id;
+}
+
+function updatePublicOpinion(actives) {
+    // Garante que as referências ainda existem
+    if (!actives.find(p => p.id === publicFavoriteId)) {
+        publicFavoriteId = actives.sort((a,b) => b.popularity - a.popularity)[0].id;
+    }
+    if (!actives.find(p => p.id === publicVillainId)) {
+        publicVillainId = actives.sort((a,b) => b.rejection - a.rejection)[0].id;
+    }
+
+    // 40% de chance de o favorito perder o favoritismo
+    if (Math.random() < 0.40) {
+        const fav = actives.find(p => p.id === publicFavoriteId);
+        const candidates = actives.filter(p => p.id !== publicFavoriteId);
+        if (candidates.length > 0) {
+            const newFav = candidates[Math.floor(Math.random() * candidates.length)];
+            addLog(`📱 VIRADA! O público está mudando de favorito: ${fav.name} → ${newFav.name}!`, "info");
+            if (fav) fav.popularity -= 12 + Math.random() * 8; // perde popularidade
+            newFav.popularity += 10 + Math.random() * 10;
+            publicFavoriteId = newFav.id;
+            favChangedWeek = week;
+        }
+    }
+
+    // 30% de chance do vilão se redimir (cai nas graças do público)
+    if (Math.random() < 0.30) {
+        const vil = actives.find(p => p.id === publicVillainId);
+        const newVil = actives.sort((a,b) => b.rejection - a.rejection)[0];
+        if (newVil && newVil.id !== publicVillainId) {
+            addLog(`📊 O público está voltando os olhos para ${newVil.name} como o(a) novo(a) vilão(ã).`, "info");
+            publicVillainId = newVil.id;
+            vilChangedWeek = week;
+        }
+    } else {
+        // Vilão continua acumulando rejeição
+        const vil = actives.find(p => p.id === publicVillainId);
+        if (vil) vil.rejection = Math.min(100, vil.rejection + 5);
+    }
+}
+
+// ══════════════════════════════════════════════════════
+// VIP / XEPA (baseado nas alianças do líder)
+// ══════════════════════════════════════════════════════
+function assignXepaVip(actives, lider) {
+    actives.forEach(p => { p.isVip = false; p.isMonstro = false; });
+    const vipCount = Math.ceil(actives.length * 0.4);
+    const sorted = [...actives].sort((a,b) => {
+        if (a === lider) return -1;
+        if (b === lider) return 1;
+        return (lider.relations[b.id]||0) - (lider.relations[a.id]||0);
+    });
+    sorted.slice(0, vipCount).forEach(p => p.isVip = true);
+}
+
+// ══════════════════════════════════════════════════════
+// JOGO DA DISCÓRDIA
+// ══════════════════════════════════════════════════════
+function runJogoDiscordia(actives) {
+    const topic = rnd(discordiaTopics);
+    let nominations = {};
+    let rows = "";
+
+    actives.forEach(p => {
+        let targets = actives.filter(o => o !== p);
+        let alvo;
+        const drama = Math.random() < 0.15; // drama: aponta aliado
+        if (drama) {
+            const allies = targets.filter(o => (p.relations[o.id]||0) > 20);
+            alvo = allies.length > 0 ? rnd(allies) : targets.sort((a,b) => (p.relations[a.id]||0) - (p.relations[b.id]||0))[0];
+        } else {
+            targets.sort((a,b) => (p.relations[a.id]||0) - (p.relations[b.id]||0));
+            alvo = targets[0];
+        }
+        nominations[alvo.name] = (nominations[alvo.name]||0) + 1;
+        changeRelation(p, alvo.id, -20);
+        changeRelation(alvo, p.id, -10);
+        const dramaTag = drama ? ' <span style="color:#ffeaa7;font-size:0.8em">⚠️ surpresa!</span>' : '';
+        rows += `<div style="padding:4px 0;border-bottom:1px solid #444;font-size:0.85em">👉 <b>${p.name}</b> apontou <b>${alvo.name}</b>${dramaTag}</div>`;
+    });
+
+    const sorted = Object.entries(nominations).sort((a,b) => b[1]-a[1]);
+    const vilaoNome = sorted[0][0];
+    const vilaoVotos = sorted[0][1];
+    const vilao = participants.find(p => p.name === vilaoNome);
+    if (vilao) vilao.rejection = Math.min(100, vilao.rejection + 15);
+
+    addLog(`🎯 JOGO DA DISCÓRDIA: "${topic}"`, "info");
+    addLog(`💥 ${vilaoNome} foi o(a) mais apontado(a) com ${vilaoVotos} votos! Rejeição +15!`, "danger");
+
+    return `<div class="discordia-box">
+        <div style="font-size:1.05em;font-weight:bold;margin-bottom:10px">🎯 JOGO DA DISCÓRDIA — <em>"${topic}"</em></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">${rows}</div>
+        <div class="discordia-apontado">💥 ${vilaoNome} — mais apontado(a) (${vilaoVotos} votos)! Rejeição sobe!</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// GERAÇÃO DE PORCENTAGENS DO PAREDÃO
+// Garante SEMPRE que o eliminado tem a MAIOR porcentagem
+// ══════════════════════════════════════════════════════
+function generateElimPcts(scores) {
+    const elim = scores[0].p;
+    const nSurv = scores.length - 1; // sobreviventes
+    const n = scores.length;           // total no paredão
+
+    // Decide o modo baseado na rejeição do eliminado
+    const cancelChance = Math.min(0.55, (elim.rejection / 100) + 0.05);
+    const r = Math.random();
+    let mode = 'normal';
+    if (r < cancelChance) mode = 'cancelado';
+    else if (r < cancelChance + 0.28) mode = 'acirrado';
+
+    // --- p1 mínimo para garantir ser o maior ---
+    // Para n pessoas com igual distribuição, cada uma levaria 100/n.
+    // p1 precisa ser > 100/n para ser o maior.
+    // Com survivors capados em (p1-1), temos: p1 + (p1-1)*nSurv >= 100
+    // → p1_min = (100 + nSurv) / (nSurv + 1)  [= 100/n quando simplificado]
+    const p1Min = (100 + nSurv) / (n); // ligeiramente acima de 100/n
+
+    let p1Raw;
+    if (mode === 'cancelado') {
+        p1Raw = 78 + Math.random() * 20;       // 78-98%
+    } else if (mode === 'acirrado') {
+        p1Raw = p1Min + 1 + Math.random() * 7; // minimamente acima, mas perto
+    } else {
+        p1Raw = p1Min + 15 + Math.random() * 20; // confortavelmente acima
+    }
+
+    // Garante o mínimo matematicamente necessário
+    const p1 = Math.min(98.9, Math.max(p1Raw, p1Min + 0.5));
+
+    // Distribui o restante entre os sobreviventes
+    // Cada survivor é capado em (p1 - 1) para jamais superar o eliminado
+    const remaining = 100 - p1;
+    const survCap = p1 - 1;
+
+    // Se o cap é pequeno demais para distribuir o restante, ajusta
+    // Caso extremo: nSurv=1, p1=42 → remaining=58 > survCap=41. Nesse caso sobe p1.
+    let finalP1 = p1;
+    if (remaining > survCap * nSurv) {
+        // p1 mínimo onde remaining <= survCap*nSurv:
+        // 100 - p1 <= (p1-1)*nSurv → 100+nSurv <= p1*(nSurv+1) → p1 >= (100+nSurv)/(nSurv+1)
+        finalP1 = Math.ceil(((100 + nSurv) / (nSurv + 1)) * 100) / 100 + 0.5;
+    }
+
+    const rem2 = 100 - finalP1;
+    const cap2 = finalP1 - 1;
+
+    let raws = Array.from({length: nSurv}, () => Math.random());
+    const rawSum = raws.reduce((a,b) => a+b, 0);
+    let survPcts = raws.map(v => Math.min((rem2 * v / rawSum), cap2));
+
+    // Renormaliza para somar exatamente rem2
+    const pSum = survPcts.reduce((a,b) => a+b, 0);
+    if (pSum > 0) survPcts = survPcts.map(v => (v / pSum) * rem2);
+
+    // Verificação final (paranoia)
+    const maxSurv = Math.max(...survPcts);
+    if (maxSurv >= finalP1) {
+        // Redistribui uniformemente
+        survPcts = survPcts.map(() => rem2 / nSurv);
+    }
+
+    return {
+        p1: finalP1.toFixed(2),
+        survivorPcts: survPcts.map(v => parseFloat(v).toFixed(2)),
+        mode
+    };
+}
+
+// ══════════════════════════════════════════════════════
+// SETUP — TELA INICIAL
+// ══════════════════════════════════════════════════════
+function randomizeCast() {
+    const s = [...namesBank].sort(() => 0.5 - Math.random());
+    document.getElementById('input-cast').value = s.slice(0,20).join(", ");
+}
+
+function goToDetails() {
+    const n = document.getElementById('input-cast').value.split(',').map(x=>x.trim()).filter(x=>x);
+    participants = n.map((name,i) => ({
+        id: i, name,
+        room: rooms[0], group: groups[0],
+        gang: 0,
+        active: true, history: [],
+        relations: {},
+        popularity: 50 + (Math.random()*20),
+        rejection: Math.random()*20,
+        isVip: false, isMonstro: false, finalPct: null
+    }));
+    participants.forEach(p => {
+        participants.forEach(o => { if(p.id!==o.id) p.relations[o.id] = (Math.random()*20)-10; });
+    });
+    renderDetails();
+    document.getElementById('page-setup').classList.remove('active');
+    document.getElementById('page-details').classList.add('active');
+}
+
+function renderDetails() {
+    const div = document.getElementById('cast-details-list');
+    div.innerHTML = "";
+    participants.forEach((p,i) => {
+        const bc = getGroupColor(p.group);
+        div.innerHTML += `<div class="p-card" id="pcard-${i}" style="border-top:5px solid ${bc};">
+            <strong>${p.name}</strong><br>
+            <select onchange="participants[${i}].group=this.value;document.getElementById('pcard-${i}').style.borderTopColor=getGroupColor(this.value);">
+                ${groups.map(g=>`<option value="${g}" ${p.group===g?'selected':''}>${g}</option>`).join('')}
+            </select>
+            <select onchange="participants[${i}].room=this.value">
+                ${rooms.map(r=>`<option value="${r}" ${p.room===r?'selected':''}>${r}</option>`).join('')}
+            </select>
+        </div>`;
+    });
+}
+
+function autoAssign() {
+    participants.forEach(p => {
+        p.group = groups[Math.floor(Math.random()*groups.length)];
+        p.room  = rooms[Math.floor(Math.random()*rooms.length)];
+    });
+    renderDetails();
+}
+
+function startSeason() {
+    fakeParedaoWeek = 0; // controlado apenas pelo checkbox manual
+    initGroups(participants);
+    initPublicOpinion(participants);
+    document.getElementById('page-details').classList.remove('active');
+    document.getElementById('page-sim').classList.add('active');
+    updateBadges();
+}
+
+// ══════════════════════════════════════════════════════
+// MAIN WEEK RUNNER
+// ══════════════════════════════════════════════════════
+function runWeek() {
+    let actives = participants.filter(p => p.active);
+
+    if (actives.length <= 3) return runTop3Final(actives);
+    if (actives.length === 4) return runTop4Week(actives);
+
+    document.getElementById('console').innerHTML = "";
+    document.getElementById('votos-container').style.display = "block";
+    lastWeekExit = null;
+
+    const isTop5 = actives.length === 5;
+    const isTop6 = actives.length === 6;
+
+    // ── DESISTÊNCIA / EXPULSÃO ──
+    let narrativeExtra = "";
+    if (exitsCounter < 4 && week > 1 && actives.length > 5) {
+        const exitChance = 0.18 + (week * 0.02);
+        if (Math.random() < exitChance) {
+            const azarado = rnd(actives);
+            const isExpulsao = Math.random() > 0.55;
+            const motivo = isExpulsao ? rnd(kickReasons) : rnd(quitReasons);
+            const tipoEvento = isExpulsao ? "FOI EXPULSO(A)" : "DESISTIU";
+            const emoji = isExpulsao ? "🚨" : "😢";
+            const cls = isExpulsao ? "expulsao" : "desistencia";
+            narrativeExtra = `<div class="exit-banner ${cls}">${emoji} <b>${azarado.name} ${tipoEvento} DO PROGRAMA!</b><br>
+                <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${motivo}</span></div>`;
+            lastWeekExit = { name: azarado.name, tipo: tipoEvento, emoji, motivo, cls };
+            azarado.active = false;
+            while (azarado.history.length < week-1) azarado.history.push("-");
+            azarado.history.push("DES");
+            elimOrder.push(azarado);
+            exitsCounter++;
+            actives = participants.filter(p => p.active);
+            if (actives.length <= 3) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop3Final(actives); }
+            if (actives.length === 4) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop4Week(actives); }
+        }
+    }
+
+    // ── Prova do Líder ──
+    const provaLiderNome = rnd(provaLiderNames);
+    const lider = actives[Math.floor(Math.random()*actives.length)];
+    addLog(`🏋️ PROVA DO LÍDER: ${provaLiderNome}`, "info");
+    addLog(`👑 LÍDER: ${lider.name} venceu a ${provaLiderNome}!`, "info");
+
+    // ── VIP/Xepa baseado em alianças do líder ──
+    assignXepaVip(actives, lider);
+
+    // ── Opinião Pública ──
+    updatePublicOpinion(actives);
+
+    // ── Dinâmicas de Grupo ──
+    const gangLog = updateGroupDynamics(actives);
+
+    // ── Narrativa da semana ──
+    let narrative = `<b>🍽️ VIP:</b> ${actives.filter(p=>p.isVip).map(p=>p.name).join(", ")} (${rnd(vipDescriptions)})<br>`;
+    narrative += `<b>🥡 Xepa:</b> ${actives.filter(p=>!p.isVip).map(p=>p.name).join(", ")} (${rnd(xepaDescriptions)})<br><br>`;
+    if (gangLog) narrative += gangLog + "<br><br>";
+
+    // Eventos orgânicos da casa (brigas/romances)
+    actives.forEach(p => {
+        if (Math.random() < 0.09) {
+            const target = rnd(actives.filter(o => o !== p));
+            if (!target) return;
+            if (Math.random() > 0.55) {
+                narrative += `🔥 <b>${p.name}</b> e <b>${target.name}</b> tiveram uma briga feia! `;
+                changeRelation(p, target.id, -30);
+                changeRelation(target, p.id, -30);
+            } else {
+                narrative += `💖 Clima de romance entre <b>${p.name}</b> e <b>${target.name}</b>! `;
+                changeRelation(p, target.id, 30);
+                changeRelation(target, p.id, 30);
+            }
+        }
+    });
+
+    // ── Jogo da Discórdia ──
+    const discordiaHTML = runJogoDiscordia(actives);
+
+    document.getElementById('narrative-area').innerHTML = narrativeExtra +
+        `<div class="narrative-box"><h3>📝 Narrativa da Semana ${week}</h3><p>${narrative}</p></div>` +
+        discordiaHTML;
+
+    // Perdedor da prova (dinâmica prova-lider)
+    const perdedorProva = [...actives].filter(p=>p!==lider)
+        .sort((a,b)=>(b.rejection-a.rejection)+(Math.random()*10-5))[0];
+
+    // ── Anjo (só se não for TOP5) ──
+    let anjo=null, alvoAnjo=null, isAuto=false;
+    if (!isTop5) {
+        const provaAnjoNome = rnd(provaAnjoNames);
+        anjo = rnd(actives.filter(p=>p!==lider));
+        // TOP6: anjo SEMPRE autoimune, independente da config
+        isAuto = isTop6 || document.getElementById('config-anjo').value === 'auto';
+        const elegiveisImu = actives.filter(p=>p!==anjo&&p!==lider);
+        if (isAuto) {
+            alvoAnjo = anjo;
+        } else if (elegiveisImu.length > 0) {
+            const sorted = [...elegiveisImu].sort((a,b)=>(anjo.relations[b.id]||0)-(anjo.relations[a.id]||0));
+            alvoAnjo = sorted[0];
+        } else {
+            alvoAnjo = anjo;
+        }
+        addLog(`😇 PROVA DO ANJO: ${provaAnjoNome}`, "info");
+        addLog(`👼 ANJO: ${anjo.name} (${isTop6 ? 'TOP 6 — Autoimune obrigatório!' : isAuto ? 'Autoimune' : 'Imunizou aliado '+alvoAnjo.name})`, "info");
+        if (isTop6) addLog(`⚠️ TOP 6 — Anjo é AUTOIMUNE. Todos os outros 4 vão ao Paredão!`, "info");
+
+        // Monstro: anjo coloca seu maior rival (apenas fora do TOP6)
+        if (!isTop6) {
+            const elegMonstro = actives.filter(p=>p!==anjo&&p!==alvoAnjo&&p!==lider);
+            if (elegMonstro.length > 0) {
+                const monstroSorted = [...elegMonstro].sort((a,b)=>(anjo.relations[a.id]||0)-(anjo.relations[b.id]||0));
+                const monstro = monstroSorted[0];
+                monstro.isMonstro = true;
+                if (monstro.isVip) monstro.isVip = false;
+                addLog(`👹 MONSTRO: ${anjo.name} escolheu ${monstro.name} (rival)!`, "danger");
+                addLog(`🎭 CASTIGO: ${monstro.name} terá que ${rnd(monstroPunishments)}.`, "info");
+            }
+        }
+    } else {
+        addLog(`⚠️ TOP 5 — Sem Anjo! Líder imune, os outros 4 vão TODOS ao Paredão!`, "info");
+    }
+
+    // Pool elegível para paredão
+    const imunizados = [lider, ...(alvoAnjo ? [alvoAnjo] : [])];
+    let elegiveisVoto = actives.filter(p=>!imunizados.includes(p));
+
+    // ── Dinâmica Aleatória ──
+    const dinamicaCfg = document.getElementById('config-dinamica').value;
+    let dinamicaPessoa = null;
+
+    if (dinamicaCfg === 'bigfone-atende') {
+        const pool = actives.filter(p=>p!==lider&&p!==alvoAnjo);
+        if (pool.length>0) { dinamicaPessoa=rnd(pool); addLog(`📞 BIG FONE! ${dinamicaPessoa.name} vai DIRETO AO PAREDÃO!`,"danger"); }
+    } else if (dinamicaCfg === 'bigfone-indica') {
+        const pool = actives.filter(p=>p!==lider&&p!==alvoAnjo);
+        if (pool.length>=2) {
+            const atendeu = rnd(pool);
+            const alvoPool = pool.filter(p=>p!==atendeu).sort((a,b)=>atendeu.relations[a.id]-atendeu.relations[b.id]);
+            dinamicaPessoa = alvoPool[0]||null;
+            addLog(`📞 BIG FONE: ${atendeu.name} indicou ${dinamicaPessoa?.name} ao Paredão!`,"danger");
+        }
+    } else if (dinamicaCfg === 'prova-lider') {
+        dinamicaPessoa = perdedorProva;
+        if (dinamicaPessoa) addLog(`🏋️ PERDA NA PROVA: ${dinamicaPessoa.name} vai ao Paredão!`,"danger");
+    } else if (dinamicaCfg === 'duelo') {
+        const cands = actives.filter(p=>p!==lider&&p!==alvoAnjo);
+        if (cands.length>=2) {
+            const esc = rnd(cands);
+            const rival = cands.filter(p=>p!==esc).sort((a,b)=>esc.relations[a.id]-esc.relations[b.id])[0];
+            addLog(`⚔️ DUELO! ${esc.name} vs ${rival.name}!`,"danger");
+            const sA=esc.rejection+Math.random()*30, sB=rival.rejection+Math.random()*30;
+            dinamicaPessoa = sA>sB?esc:rival;
+            const venc = dinamicaPessoa===esc?rival:esc;
+            addLog(`⚔️ ${venc.name} VENCEU! ${dinamicaPessoa.name} vai ao Paredão!`,"danger");
+        }
+    } else {
+        addLog(`📋 Sem Dinâmica. A Casa indicará uma segunda pessoa.`,"info");
+    }
+
+    // ── Votação da Casa (aliados não votam entre si, exceto traição 8%) ──
+    let votos = {}; let htmlVotos = "";
+    actives.forEach(p => {
+        let alvosValidos = elegiveisVoto.filter(o=>o!==p);
+        if (alvosValidos.length===0) alvosValidos = actives.filter(o=>o!==p);
+        if (alvosValidos.length===0) return;
+        let alvo;
+        const betrayal = Math.random() < 0.08;
+        if (betrayal) {
+            const allies = alvosValidos.filter(o=>(p.relations[o.id]||0)>15);
+            alvo = allies.length>0 ? rnd(allies) : rnd(alvosValidos);
+        } else {
+            // Solo/Muro são alvos prioritários (sem proteção de grupo)
+            const nonAllies = alvosValidos.filter(o=>(p.relations[o.id]||0)<=10);
+            const pool = nonAllies.length>0 ? nonAllies : alvosValidos;
+            pool.sort((a,b)=>{
+                const vulnA = (a.gang===GANG_SOLO||a.gang===GANG_MURO)?-30:0;
+                const vulnB = (b.gang===GANG_SOLO||b.gang===GANG_MURO)?-30:0;
+                return ((p.relations[a.id]||0)+vulnA)-((p.relations[b.id]||0)+vulnB);
+            });
+            alvo = pool[0];
+        }
+        votos[alvo.name] = (votos[alvo.name]||0)+1;
+        htmlVotos += `<div><b>${p.name}</b> vota em <b>${alvo.name}</b>${betrayal?' <span style="color:#e91e8c;font-size:0.8em">⚠️ traição!</span>':''}.<span class="confessionary-text">${getConfessionalPhrase(p,alvo)}</span></div>`;
+    });
+    document.getElementById('votos-lista').innerHTML = htmlVotos;
+
+    // ── Formação do Paredão (mínimo 4) ──
+    let indicados = [];
+    function pickFromPool() {
+        let pool = elegiveisVoto.filter(p=>!indicados.includes(p));
+        if (pool.length===0) pool = actives.filter(p=>p!==lider&&!indicados.includes(p));
+        if (pool.length===0) pool = actives.filter(p=>!indicados.includes(p));
+        // Prefere Solo/Muro na falta de rivais
+        const vuln = pool.filter(p=>p.gang===GANG_SOLO||p.gang===GANG_MURO);
+        return vuln.length>0 ? rnd(vuln) : (pool.length>0 ? rnd(pool) : null);
+    }
+    function addIndicado(p) {
+        if (p && !indicados.find(x=>x.id===p.id)) { indicados.push(p); return true; }
+        return false;
+    }
+
+    if (dinamicaPessoa) addIndicado(dinamicaPessoa);
+
+    // Líder indica seu maior rival/não-aliado (solo e muro são alvos preferidos)
+    let liderPool = elegiveisVoto.filter(p=>!indicados.includes(p));
+    if (liderPool.length===0) liderPool = actives.filter(p=>p!==lider&&!indicados.includes(p));
+    liderPool.sort((a,b)=>{
+        const vulnA = (a.gang===GANG_SOLO||a.gang===GANG_MURO)?-40:0;
+        const vulnB = (b.gang===GANG_SOLO||b.gang===GANG_MURO)?-40:0;
+        return ((lider.relations[a.id]||0)+vulnA)-((lider.relations[b.id]||0)+vulnB);
+    });
+    const indLid = liderPool[0] || pickFromPool();
+    if (addIndicado(indLid)) addLog(`📍 LÍDER: Indicou ${indLid.name} ao Paredão.`);
+
+    const sortedV = Object.keys(votos).sort((a,b)=>votos[b]-votos[a]);
+    let pCasa1 = null;
+    for (const nome of sortedV) {
+        const cand = participants.find(x=>x.name===nome&&x.active&&!indicados.find(i=>i.id===x.id));
+        if (cand) { pCasa1=cand; break; }
+    }
+    if (!pCasa1) pCasa1=pickFromPool();
+    if (addIndicado(pCasa1)) addLog(`🗳️ CASA: ${pCasa1.name} foi o(a) mais votado(a) (${votos[pCasa1.name]||'?'} votos).`);
+
+    if (dinamicaCfg==='nenhum') {
+        let pCasa2=null;
+        for (let i=1;i<sortedV.length;i++) {
+            const cand = participants.find(x=>x.name===sortedV[i]&&x.active&&!indicados.find(ind=>ind.id===x.id));
+            if (cand) { pCasa2=cand; break; }
+        }
+        if (!pCasa2) pCasa2=pickFromPool();
+        if (addIndicado(pCasa2)) addLog(`🗳️ CASA (extra): ${pCasa2.name} foi o(a) segundo(a) mais votado(a).`);
+    }
+
+    while (indicados.length < 4) {
+        const extra = pickFromPool(); if (!extra) break;
+        if (!addIndicado(extra)) break;
+        addLog(`🔄 CONTRAGOLPE: ${indLid?.name||'Líder'} puxou ${extra.name}.`);
+    }
+
+    // ── Prova Bate e Volta ──
+    // Indicado do Líder vai DIRETO ao Paredão — NUNCA disputa o Bate e Volta
+    const bvParticipantes = indicados.filter(p => !indLid || p !== indLid);
+    if (indLid) addLog(`🚫 ${indLid.name} foi indicado(a) pelo Líder → vai DIRETO ao Paredão, fora do Bate e Volta!`, "danger");
+
+    let salvo = null;
+    if (bvParticipantes.length > 0) {
+        addLog(`⚡ BATE E VOLTA: ${bvParticipantes.map(p=>p.name).join(' × ')} disputam!`, "info");
+        const bvWeights = bvParticipantes.map(p=>Math.max(1,p.popularity));
+        const totalW = bvWeights.reduce((a,b)=>a+b,0);
+        let rand=Math.random()*totalW, cumul=0, salvoIdx=0;
+        for (let i=0;i<bvWeights.length;i++) { cumul+=bvWeights[i]; if(rand<=cumul){salvoIdx=i;break;} }
+        salvo = bvParticipantes[salvoIdx];
+        addLog(`🎉 BATE E VOLTA: ${salvo.name} SE SALVOU!`, "info");
+    } else {
+        addLog(`⚠️ Sem outros participantes para o Bate e Volta.`, "info");
+    }
+
+    const paredaoFinal = indicados.filter(p=>p!==salvo);
+    addLog(`🔴 PAREDÃO: ${paredaoFinal.map(p=>p.name).join(' × ')}`, "danger");
+
+    processElim(paredaoFinal, lider, anjo, alvoAnjo, isAuto, salvo);
+}
+
+// ══════════════════════════════════════════════════════
+// PROCESS ELIM — semanas normais
+// ══════════════════════════════════════════════════════
+function processElim(indicados, lider, anjo, alvoAnjo, isAuto, salvo) {
+    // Aplica influência do favorito e vilão nos scores
+    const scores = indicados.map(p => {
+        let score = (p.rejection * 2) - p.popularity + (Math.random() * 50);
+        if (p.id === publicFavoriteId) score -= 40; // favorito é muito menos votado
+        if (p.id === publicVillainId)  score += 35; // vilão é muito mais votado
+        // Solo e Muro são mais vulneráveis
+        if (p.gang === GANG_SOLO || p.gang === GANG_MURO) score += 15;
+        return { p, score };
+    });
+    scores.sort((a,b) => b.score - a.score);
+
+    // ── PAREDÃO FALSO ──
+    const manualFake = document.getElementById('check-fake-paredao')?.checked;
+    if (manualFake) document.getElementById('check-fake-paredao').checked = false;
+    const isFakeParedao = !fakeParedaoUsed && (manualFake || (week === fakeParedaoWeek && fakeParedaoWeek > 0));
+    if (isFakeParedao) {
+        runFakeParedao(scores, indicados, lider, anjo, alvoAnjo, isAuto, salvo);
+        return;
+    }
+
+    const { p1, survivorPcts, mode } = generateElimPcts(scores);
+    const pcts = [p1, ...survivorPcts];
+
+    if (mode==='cancelado') addLog(`🔥 CANCELAMENTO TOTAL! O Brasil deu um recado!`, "danger");
+    else if (mode==='acirrado') addLog(`😮 PAREDÃO ACIRRADÍSSIMO! Foi por muito pouco!`, "info");
+
+    addLog(`📊 RESULTADO: ${scores[0].p.name} eliminado(a) com ${p1}% dos votos!`, "danger");
+    scores.slice(1).forEach((s,i) => addLog(`✅ ${s.p.name} permanece com ${pcts[i+1]}%.`));
+    addLog(`🛑 MOTIVO: ${rnd(elimReasons)}`, "info");
+
+    const elim = participants.find(p=>p.name===scores[0].p.name);
+
+    participants.forEach(p => {
+        if (!p.active) { if (p.history.length<week) p.history.push("-"); return; }
+        if (p===elim)              p.history.push(`ELIM ${p1}%`);
+        else if (p===lider)        p.history.push("LID");
+        else if (alvoAnjo&&p===alvoAnjo) p.history.push("IMU");
+        else if (anjo&&p===anjo&&!isAuto) p.history.push("ANJO");
+        else if (p===salvo)        p.history.push("SALVO");
+        else if (indicados.includes(p)) p.history.push("PAR");
+        else                       p.history.push("SAFE");
+    });
+
+    elim.active = false;
+    elimOrder.push(elim);
+    showSummary();
+}
+
+// ══════════════════════════════════════════════════════
+// PAREDÃO FALSO
+// ══════════════════════════════════════════════════════
+function runFakeParedao(scores, indicados, lider, anjo, alvoAnjo, isAuto, salvo) {
+    fakeParedaoUsed = true;
+    // Paredão falso: público vota pra SALVAR seu favorito
+    // No paredão falso o público vota normalmente para ELIMINAR.
+    // Quem receber a MAIOR % é o "eliminado" — mas na verdade retorna!
+    // scores já está ordenado DECRESCENTE por rejeição → scores[0] = mais rejeitado = vitima
+    const vitima = scores[0].p;
+    fakeParedaoVitima = vitima;
+
+    // Usa generateElimPcts diretamente: scores[0] (vitima) recebe a MAIOR porcentagem
+    const { p1: elimPct, survivorPcts } = generateElimPcts(scores);
+    const allPcts = [elimPct, ...survivorPcts];
+
+    document.getElementById('narrative-area').innerHTML += `
+        <div class="fake-paredao-banner">
+            🎭 PAREDÃO FALSO!<br>
+            <small style="font-weight:normal;font-size:0.75em">O público vota para ELIMINAR — mas ninguém sai de verdade! Quem receber MAIS votos é o "eliminado" e RETORNA amanhã! 🎭</small>
+        </div>`;
+
+    addLog(`🎭 PAREDÃO FALSO ATIVADO! O público votou normalmente...`, "info");
+    addLog(`📊 RESULTADO: ${vitima.name} foi "eliminado(a)" com ${elimPct}% dos votos!`, "danger");
+    scores.slice(1).forEach((s, i) => addLog(`✅ ${s.p.name} permanece com ${allPcts[i+1]}%.`));
+    addLog(`😱 ${vitima.name} APARENTEMENTE ELIMINADO(A)!... mas É UM PAREDÃO FALSO — RETORNA AMANHÃ! 🎭`, "info");
+
+    // Vitima continua ativa — paredão falso
+    participants.forEach(p => {
+        if (!p.active) { if (p.history.length<week) p.history.push("-"); return; }
+        if (p===vitima)             p.history.push(`ELIM ${elimPct}%`); // aparece como ELIM na tabela
+        else if (p===lider)         p.history.push("LID");
+        else if (alvoAnjo&&p===alvoAnjo) p.history.push("IMU");
+        else if (anjo&&p===anjo&&!isAuto) p.history.push("ANJO");
+        else if (p===salvo)         p.history.push("SALVO");
+        else if (indicados.includes(p)) p.history.push("PAR");
+        else                        p.history.push("SAFE");
+    });
+    // vitima continua ativa! (paredão falso)
+
+    showSummary();
+}
+
+// ══════════════════════════════════════════════════════
+// TOP 4
+// ══════════════════════════════════════════════════════
+function runTop4Week(actives) {
+    document.getElementById('console').innerHTML="";
+    document.getElementById('narrative-area').innerHTML=`
+        <div class="final-banner">🔥 TOP 4 — Decisão!<br>
+        <small style="font-size:0.7em">Quem vencer a prova garante vaga na FINAL. Os outros 3 vão ao Paredão.</small></div>`;
+    document.getElementById('votos-container').style.display="none";
+
+    const provaLiderNome = rnd(provaLiderNames);
+    addLog(`🏋️ ÚLTIMA PROVA DO LÍDER: ${provaLiderNome}`,"info");
+    addLog(`⚠️ SEM ANJO — todos correm risco!`,"info");
+
+    const weights = actives.map(p=>Math.max(1,p.popularity));
+    const totalW = weights.reduce((a,b)=>a+b,0);
+    let r=Math.random()*totalW, cumul=0, winIdx=0;
+    for (let i=0;i<weights.length;i++) { cumul+=weights[i]; if(r<=cumul){winIdx=i;break;} }
+    const vencedor = actives[winIdx];
+    addLog(`🏆 ${vencedor.name} VENCEU A PROVA E ESTÁ NA FINAL!`,"info");
+
+    const paredao = actives.filter(p=>p!==vencedor);
+    addLog(`🔴 PAREDÃO FINAL (TOP4): ${paredao.map(p=>p.name).join(' × ')}`,"danger");
+
+    const scores = paredao.map(p => {
+        let s = (p.rejection*2)-p.popularity+(Math.random()*50);
+        if (p.id===publicFavoriteId) s -= 40;
+        if (p.id===publicVillainId)  s += 35;
+        return { p, score:s };
+    });
+    scores.sort((a,b)=>b.score-a.score);
+    const elim = scores[0].p;
+    const finalistas2 = scores.slice(1).map(s=>s.p);
+
+    const { p1, survivorPcts, mode } = generateElimPcts(scores);
+    const p2 = survivorPcts[0], p3 = survivorPcts[1]||'0.00';
+
+    if (mode==='cancelado') addLog(`🔥 CANCELAMENTO TOTAL no TOP4!`,"danger");
+    else if (mode==='acirrado') addLog(`😮 PAREDÃO ACIRRADÍSSIMO no TOP4!`,"info");
+    addLog(`📊 RESULTADO: ${elim.name} eliminado(a) com ${p1}% dos votos!`,"danger");
+    addLog(`🛑 ${rnd(elimReasons)}`,"info");
+    finalistas2.forEach((p,i) => addLog(`✅ ${p.name} segue para a FINAL com ${i===0?p2:p3}%.`));
+
+    participants.forEach(p => {
+        if (!p.active) { if (p.history.length<week) p.history.push("-"); return; }
+        if (p===vencedor) p.history.push("LID");
+        else if (p===elim) p.history.push(`ELIM ${p1}%`);
+        else p.history.push("PAR");
+    });
+
+    elim.active = false;
+    elimOrder.push(elim);
+    week++;
+
+    document.getElementById('week-display').innerText = "TOP 3 — Grande Final";
+    document.getElementById('summary-area').style.display = "block";
+    const finalistas = participants.filter(p=>p.active);
+    document.getElementById('alliance-container').innerHTML =
+        `<div style="text-align:center;font-size:1.2em;padding:20px;background:linear-gradient(135deg,#ffecd2,#fcb69f);border-radius:10px;font-weight:bold;">
+            🏆 FINALISTAS: ${finalistas.map(p=>p.name).join(' &nbsp;×&nbsp; ')}</div>`;
+    renderTable('live-table-container');
+    updateBadges();
+    document.getElementById('btn-next').textContent = "🏆 ANUNCIAR VENCEDOR(A)";
+    document.getElementById('btn-next').onclick = () => runTop3Final(finalistas);
+}
+
+// ══════════════════════════════════════════════════════
+// TOP 3 — GRANDE FINAL
+// ══════════════════════════════════════════════════════
+function runTop3Final(actives) {
+    actives = participants.filter(p=>p.active);
+    document.getElementById('page-sim').classList.remove('active');
+    document.getElementById('page-final').classList.add('active');
+
+    const sorted = [...actives].sort((a,b)=>(b.popularity+Math.random()*10)-(a.popularity+Math.random()*10));
+    const vencedor=sorted[0], segundo=sorted[1], terceiro=sorted[2];
+
+    // Favorito da edição tem vantagem na final
+    if (vencedor.id !== publicFavoriteId) {
+        const fav = actives.find(p=>p.id===publicFavoriteId);
+        if (fav && Math.random() < 0.6) { // 60% de chance do favorito ganhar a final
+            sorted.sort((a,b) => (b.id===publicFavoriteId?1:0)-(a.id===publicFavoriteId?1:0));
+        }
+    }
+
+    const scores3 = [...actives].map(p => {
+        let s = p.popularity + (Math.random()*15);
+        if (p.id===publicFavoriteId) s += 30;
+        if (p.id===publicVillainId)  s -= 20;
+        return {p,s};
+    });
+    scores3.sort((a,b)=>b.s-a.s);
+    const finalVencedor=scores3[0].p, finalSegundo=scores3[1]?.p, finalTerceiro=scores3[2]?.p;
+
+    // Porcentagens da final (favorito sempre mais)
+    let pct1 = parseFloat((35+Math.random()*35).toFixed(2));
+    const rem=100-pct1;
+    let pct2 = parseFloat((rem*(0.4+Math.random()*0.3)).toFixed(2));
+    let pct3 = parseFloat((100-pct1-pct2).toFixed(2));
+
+    document.getElementById('winner-name').innerText = finalVencedor.name;
+    const favTag = finalVencedor.id===publicFavoriteId ? ' 🌟 Favorito(a) da edição!' : '';
+    document.getElementById('final-podium').innerHTML = `
+        <div style="margin-bottom:10px;font-size:1.1em;opacity:0.8">Resultado da votação final</div>
+        <div>🥇 <b>${finalVencedor.name}</b> — ${pct1}% 🏆${favTag}</div>
+        <div style="margin-top:8px">🥈 ${finalSegundo?.name||''} — ${pct2}%</div>
+        ${finalTerceiro?`<div style="margin-top:8px">🥉 ${finalTerceiro.name} — ${pct3}%</div>`:''}`;
+
+    actives.forEach(p => {
+        if (p===finalVencedor) { p.finalPct=pct1; p.history.push("WIN"); }
+        else if (p===finalSegundo) { p.finalPct=pct2; p.history.push("FIN"); }
+        else if (p===finalTerceiro) { p.finalPct=pct3; p.history.push("FIN"); }
+        else p.history.push("FIN");
+    });
+    renderTableFinal('final-table-container');
+}
+
+// ══════════════════════════════════════════════════════
+// RESUMO SEMANAL
+// ══════════════════════════════════════════════════════
+function showSummary() {
+    document.getElementById('summary-area').style.display = "block";
+    document.getElementById('btn-next').textContent = "PRÓXIMA SEMANA ➔";
+    document.getElementById('btn-next').onclick = prepareNextWeek;
+
+    const container = document.getElementById('alliance-container');
+    container.innerHTML = "";
+    const actives = participants.filter(p=>p.active);
+
+    // ── Expulsão/Desistência ──
+    if (lastWeekExit) {
+        const ex = lastWeekExit;
+        container.innerHTML += `<div class="exit-banner ${ex.cls}" style="margin-bottom:15px">
+            ${ex.emoji} <b>${ex.name} ${ex.tipo} DO PROGRAMA ESTA SEMANA!</b><br>
+            <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${ex.motivo}</span></div>`;
+    }
+
+    // ── Paredão Falso ──
+    if (fakeParedaoVitima && fakeParedaoUsed && participants.find(p=>p.id===fakeParedaoVitima.id&&p.active)) {
+        container.innerHTML += `<div class="fake-paredao-banner">
+            🎭 PAREDÃO FALSO! <b>${fakeParedaoVitima.name}</b> foi "eliminado(a)" mas RETORNA ao programa na próxima semana! 🎭</div>`;
+    }
+
+    // ── Favorito & Vilão ──
+    const fav = actives.find(p=>p.id===publicFavoriteId);
+    const vil = actives.find(p=>p.id===publicVillainId);
+    if (fav||vil) {
+        let favHTML = `<div class="alliance-section"><h4 class="favor-title">📊 Opinião Pública</h4><div class="alliance-grid">`;
+        if (fav) favHTML += `<div class="alliance-card fav-card">🌟 <b>Favorito(a) da Edição:</b><br>${fav.name}${favChangedWeek===week?' <span style="color:#27ae60;font-size:0.8em">👈 VIROU!</span>':''}</div>`;
+        if (vil) favHTML += `<div class="alliance-card vil-card">😈 <b>Vilão(ã) da Edição:</b><br>${vil.name}${vilChangedWeek===week?' <span style="color:#8e44ad;font-size:0.8em">👈 NOVO!</span>':''}</div>`;
+        favHTML += `</div></div>`;
+        container.innerHTML += favHTML;
+    }
+
+    // ── Grupos da Casa ──
+    const gangActive = [...new Set(actives.filter(p=>p.gang>=0).map(p=>p.gang))];
+    const solos = actives.filter(p=>p.gang===GANG_SOLO);
+    const muros = actives.filter(p=>p.gang===GANG_MURO);
+    if (gangActive.length||solos.length||muros.length) {
+        let gangsHTML = `<div class="alliance-section"><h4 class="gang-title">👥 Grupos da Casa</h4><div class="alliance-grid">`;
+        gangActive.forEach(gIdx => {
+            const members = actives.filter(p=>p.gang===gIdx);
+            if (!members.length) return;
+            const color = gangPoolColors[gIdx]||'#aaa';
+            gangsHTML += `<div class="alliance-card" style="border-top-color:${color};background:#fafafa">
+                <b style="color:${color}">${gangPool[gIdx]}</b> (${members.length})<br>
+                <span style="font-size:0.88em">${members.map(p=>p.name).join(', ')}</span></div>`;
+        });
+        if (solos.length) gangsHTML += `<div class="alliance-card solo-card">🎯 <b>Joga Solo:</b><br>
+            <span style="font-size:0.88em">${solos.map(p=>p.name).join(', ')}</span>
+            <small style="color:#e17055;display:block;margin-top:4px">⚠️ Sem proteção — alvos fáceis</small></div>`;
+        if (muros.length) gangsHTML += `<div class="alliance-card muro-card">🪨 <b>Em Cima do Muro:</b><br>
+            <span style="font-size:0.88em">${muros.map(p=>p.name).join(', ')}</span>
+            <small style="color:#636e72;display:block;margin-top:4px">⚠️ Sem aliados firmes — vulneráveis</small></div>`;
+        gangsHTML += `</div></div>`;
+        container.innerHTML += gangsHTML;
+    }
+
+    // ── VIP / Xepa / Monstro ──
+    const vips = actives.filter(p=>p.isVip&&!p.isMonstro);
+    const xepas= actives.filter(p=>!p.isVip&&!p.isMonstro);
+    const monst= actives.filter(p=>p.isMonstro);
+    let xvHTML = `<div class="alliance-section"><h4 class="xepavip-title">🍽️ VIP & Xepa da Semana</h4><div class="alliance-grid">`;
+    if (vips.length)  xvHTML += `<div class="alliance-card vip-card">⭐ <b>VIP:</b><br>${vips.map(p=>p.name).join(", ")}</div>`;
+    if (xepas.length) xvHTML += `<div class="alliance-card xepa-card">🥡 <b>Xepa:</b><br>${xepas.map(p=>p.name).join(", ")}</div>`;
+    if (monst.length) xvHTML += `<div class="alliance-card monstro-card">👹 <b>Monstro(s):</b><br>${monst.map(p=>p.name).join(", ")}</div>`;
+    xvHTML += `</div></div>`;
+    container.innerHTML += xvHTML;
+
+    // ── Romances (persistem — threshold 35) ──
+    const romancePairs = [];
+    actives.forEach(p => {
+        actives.forEach(o => {
+            if (o.id>p.id && (p.relations[o.id]||0)>35) romancePairs.push(`💕 ${p.name} & ${o.name}`);
+        });
+    });
+    if (romancePairs.length>0) {
+        container.innerHTML += `<div class="alliance-section"><h4 class="romance-title">💖 Romances & Flertes</h4>
+            <div class="alliance-grid">${romancePairs.map(r=>`<div class="alliance-card romance">${r}</div>`).join('')}</div></div>`;
+    }
+
+    // ── Rivalidades (persistem — threshold -35) ──
+    const rivalPairs = [];
+    actives.forEach(p => {
+        actives.forEach(o => {
+            if (o.id>p.id && (p.relations[o.id]||0)<-35) rivalPairs.push(`⚔️ ${p.name} vs ${o.name}`);
+        });
+    });
+    if (rivalPairs.length>0) {
+        container.innerHTML += `<div class="alliance-section"><h4 class="rival-title">💥 Rivais & Inimigos</h4>
+            <div class="alliance-grid">${rivalPairs.map(r=>`<div class="alliance-card rival">${r}</div>`).join('')}</div></div>`;
+    }
+
+    updateBadges();
+    renderTable('live-table-container');
+}
+
+// ══════════════════════════════════════════════════════
+// TABELA & BADGES
+// ══════════════════════════════════════════════════════
+function updateBadges() {
+    const actives = participants.filter(p=>p.active);
+    if (!actives.length) return;
+    const fav = actives.find(p=>p.id===publicFavoriteId) || actives.sort((a,b)=>b.popularity-a.popularity)[0];
+    const vil = actives.find(p=>p.id===publicVillainId)  || actives.sort((a,b)=>b.rejection-a.rejection)[0];
+    document.getElementById('season-badges').innerHTML = `
+        <span class="rank-badge bg-fav">🌟 Favorito: ${fav.name}</span>
+        <span class="rank-badge bg-vil">😈 Vilão: ${vil.name}</span>`;
+}
+
+function renderTable(id) {
+    const sorted = [...participants.filter(p=>p.active), ...[...elimOrder].reverse()];
+    let h = `<table><tr><th>Participante</th>`;
+    for (let i=1;i<=week;i++) h+=`<th>S${i}</th>`;
+    h+=`</tr>`;
+    sorted.forEach(p => {
+        h+=`<tr><td class="name-cell border-${p.group}">${p.name}</td>`;
+        p.history.forEach(s => h+=`<td class="st-${s.split(' ')[0]}">${s}</td>`);
+        h+=`</tr>`;
+    });
+    document.getElementById(id).innerHTML = h+"</table>";
+}
+
+function renderTableFinal(id) {
+    const allSorted = [...participants.filter(p=>p.active).sort((a,b)=>b.popularity-a.popularity), ...[...elimOrder].reverse()];
+    const maxW = Math.max(...allSorted.map(p=>p.history.length));
+    let h = `<table><tr><th>Participante</th>`;
+    for (let i=1;i<=maxW;i++) h+=`<th>S${i}</th>`;
+    h+=`</tr>`;
+    allSorted.forEach(p => {
+        h+=`<tr><td class="name-cell border-${p.group}">${p.name}</td>`;
+        p.history.forEach((s,idx) => {
+            const isLast = idx===p.history.length-1;
+            const sk = s.split(' ')[0];
+            let disp = s;
+            if (isLast && (sk==='WIN'||sk==='FIN') && p.finalPct) disp=`${sk} ${p.finalPct}%`;
+            h+=`<td class="st-${sk}">${disp}</td>`;
+        });
+        h+=`</tr>`;
+    });
+    document.getElementById(id).innerHTML = h+"</table>";
+}
+
+function addLog(msg, type) {
+    const c = document.getElementById('console');
+    const color = type==='danger'?'#ff4757':(type==='info'?'#00a0ff':'#eee');
+    c.innerHTML+=`<div class="log-item" style="color:${color}">${msg}</div>`;
+    c.scrollTop=c.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════════
+// PRÓXIMA SEMANA
+// ══════════════════════════════════════════════════════
+function prepareNextWeek() {
+    week++;
+    document.getElementById('week-display').innerText = "Semana "+week;
+    document.getElementById('summary-area').style.display = "none";
+    document.getElementById('votos-container').style.display = "none";
+    document.getElementById('narrative-area').innerHTML = "";
+
+    // Paredão falso: apenas registra no log, SEM adicionar RET à tabela
+    if (fakeParedaoVitima && fakeParedaoUsed) {
+        const v = participants.find(p=>p.id===fakeParedaoVitima.id);
+        if (v && v.active) {
+            addLog(`🎭 ${v.name} RETORNOU AO PROGRAMA! O Paredão Falso foi revelado!`, "info");
+            fakeParedaoVitima = null; // reseta
+        }
+    }
+}
+</script>
+</body>
+</html>
