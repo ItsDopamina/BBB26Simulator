@@ -860,8 +860,8 @@ function runWeek() {
 
     // ── DESISTÊNCIA / EXPULSÃO ──
     let narrativeExtra = "";
-    if (exitsCounter < 4 && week > 1 && actives.length > 5) {
-        const exitChance = 0.28 + (week * 0.08);
+    if (exitsCounter < 2 && week > 1 && actives.length > 5) {
+        const exitChance = 0.12 + (week * 0.03);
         if (Math.random() < exitChance) {
             const azarado = rnd(actives);
             const isExpulsao = Math.random() > 0.55;
