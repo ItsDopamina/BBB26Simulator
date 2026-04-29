@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><base href="https://d16ilfvy4mv02r.cloudfront.net/workspaces/RdhoUV91LnJ8TQItglOoIvTj4w48kMor/a0fe0035-5757-4b62-aaea-7f687769b4bd/files/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BBB26 Simulator</title>
@@ -10,6 +10,7 @@
             --dark:#2f3542;--light:#f1f2f6;--gold:#ffa502;
             --anjo:#7bed9f;--salvo:#a2d2ff;--imu:#00cec9;
             --pipoca:#ff9ff3;--camarote:#ff9f43;--veterano:#54a0ff;
+            --casavidro:#00b894;
             --vip:#f6e58d;--xepa:#dfe6e9;--monstro:#6c5ce7;
         }
         body { font-family:'Segoe UI',sans-serif; background:url('https://img.cdndsgni.com/preview/10884475.jpg') no-repeat center center fixed; background-size:cover; margin:0; padding-bottom:50px; }
@@ -20,8 +21,11 @@
         button { padding:12px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s; color:white; background:var(--primary); }
         button.sec { background:var(--secondary); }
         button.alt { background:var(--dark); }
-        .cast-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:15px; }
+        button.ret { background:#e17055; }
+        button.retorno-btn { background:linear-gradient(135deg,#00b894,#00cec9); }
+        .cast-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; margin-top:15px; }
         .p-card { border:1px solid #eee; padding:12px; border-radius:8px; background:#fafafa; text-align:center; }
+        .p-card select { font-size:0.82em; }
         select { width:100%; padding:8px; border-radius:6px; border:1px solid #ddd; margin-top:5px; background:white; }
         #console { background:#111; color:#eee; padding:25px; border-radius:8px; height:350px; overflow-y:auto; font-family:'Consolas',monospace; border-left:6px solid var(--primary); font-size:0.95em; line-height:1.5; }
         .log-item { border-bottom:1px solid #222; padding:8px 0; }
@@ -34,6 +38,7 @@
         .alliance-section h4.xepavip-title { background:#ffeaa7; color:#b7950b; border-left:4px solid var(--gold); }
         .alliance-section h4.gang-title    { background:#eee8ff; color:#6c5ce7; border-left:4px solid #6c5ce7; }
         .alliance-section h4.favor-title   { background:#e8f9e8; color:#27ae60; border-left:4px solid #27ae60; }
+        .alliance-section h4.party-title   { background:#fff0f6; color:#e84393; border-left:4px solid #e84393; }
         .alliance-card { background:white; padding:14px; border-radius:8px; border:1px solid #ddd; border-top:4px solid var(--primary); font-size:0.9em; }
         .alliance-card.rival   { border-top-color:var(--danger); }
         .alliance-card.romance { border-top-color:#e91e8c; }
@@ -44,23 +49,26 @@
         .alliance-card.muro-card   { border-top-color:#b2bec3; background:#f5f6fa; }
         .alliance-card.fav-card    { border-top-color:#27ae60; background:#eafaf1; }
         .alliance-card.vil-card    { border-top-color:#8e44ad; background:#f9f0ff; }
+        .alliance-card.party-card  { border-top-color:#e84393; background:#fff5fb; }
         table { width:100%; border-collapse:collapse; background:white; font-size:11px; text-align:center; margin-top:10px; }
         th,td { border:1px solid #ddd; padding:6px; }
         .name-cell { text-align:left; padding-left:10px; font-weight:bold; min-width:120px; }
         .border-Pipoca  { border-left:8px solid var(--pipoca); }
         .border-Camarote{ border-left:8px solid var(--camarote); }
         .border-Veterano{ border-left:8px solid var(--veterano); }
+        .border-Casa\ de\ Vidro { border-left:8px solid var(--casavidro); }
         .st-LID   { background:#4834d4; color:white; font-weight:bold; }
         .st-ANJO  { background:var(--anjo); color:#000; }
         .st-IMU   { background:var(--imu); color:#000; font-weight:bold; }
         .st-PAR   { background:#ffa502; color:black; }
         .st-ELIM  { background:#ff4757; color:white; font-weight:bold; font-size:0.82em; }
-        .st-RET   { background:#00b894; color:white; font-weight:bold; font-size:0.82em; }
+        .st-RET   { background:#00b894; color:white; font-weight:bold; }
         .st-DES   { background:#000; color:#fff; font-weight:bold; }
         .st-SALVO { background:var(--salvo); color:#000; font-weight:bold; }
         .st-SAFE  { background:#dfe6e9; color:#444; }
         .st-WIN   { background:var(--gold); color:#000; font-weight:bold; }
         .st-FIN   { background:#eee; color:#444; }
+        .st-VIDRO { background:var(--casavidro); color:white; font-weight:bold; font-size:0.8em; }
         .confessionary-text { font-style:italic; color:#555; background:#f9f9f9; padding:10px; border-radius:5px; margin-top:5px; display:block; border-left:3px solid #ccc; font-size:0.85em; }
         .rank-badge { display:inline-block; padding:4px 10px; border-radius:4px; font-size:0.8em; margin-left:5px; color:white; font-weight:bold; }
         .bg-fav { background:#27ae60; }
@@ -74,7 +82,15 @@
         .exit-banner.expulsao  { background:#c0392b; color:white; }
         .exit-banner.desistencia { background:#2d3436; color:white; }
         .fake-paredao-banner { background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:white; padding:20px; border-radius:12px; text-align:center; margin-bottom:15px; font-size:1.1em; font-weight:bold; }
+        .casavidro-banner { background:linear-gradient(135deg,#00b894,#00cec9); color:white; padding:20px; border-radius:12px; text-align:center; margin-bottom:15px; font-size:1.1em; font-weight:bold; }
+        .retorno-banner { background:linear-gradient(135deg,#e17055,#fd79a8); color:white; padding:20px; border-radius:12px; text-align:center; margin-bottom:15px; font-size:1.1em; font-weight:bold; }
+        .party-box { background:linear-gradient(135deg,#fd79a8,#e84393); color:white; padding:18px 22px; border-radius:10px; margin:12px 0; }
+        .personality-badge { display:inline-block; padding:2px 7px; border-radius:10px; font-size:0.75em; background:#f0f0f0; color:#555; margin-top:3px; }
+        .gender-badge { display:inline-block; padding:2px 7px; border-radius:10px; font-size:0.75em; background:#e8f4fd; color:#2980b9; margin-top:2px; }
+    .bank-chip { background:#f0f0f0; padding:5px 10px; border-radius:20px; display:inline-flex; align-items:center; gap:6px; font-size:0.82em; cursor:pointer; transition:0.2s; border:1px solid #ddd; }
+    .bank-chip:hover { background:#e0e0e0; }
     </style>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -82,9 +98,14 @@
     <h1>👁️ BBB26 - Cadastro de Elenco</h1>
     <div class="card">
         <textarea id="input-cast" style="width:100%;height:120px;border-radius:8px;padding:10px;" placeholder="Sugerir nomes ou cole os seus..."></textarea>
-        <div style="margin-top:10px;">
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
             <button onclick="randomizeCast()" class="alt">🎲 Sugerir 20 Nomes</button>
+            <button onclick="saveCastToBank()" style="background:#6c5ce7">💾 Salvar Elenco</button>
             <button onclick="goToDetails()" class="sec">Próximo ➔</button>
+        </div>
+        <div style="margin-top:15px;border-top:1px solid #eee;padding-top:12px;">
+            <div style="font-size:0.88em;font-weight:bold;color:#555;margin-bottom:8px;">📂 Elencos Salvos (clique para carregar):</div>
+            <div id="cast-bank-list" style="display:flex;flex-wrap:wrap;gap:8px;min-height:28px;"><span style="color:#bbb;font-size:0.82em">Nenhum elenco salvo ainda.</span></div>
         </div>
     </div>
 </section>
@@ -92,16 +113,19 @@
 <section id="page-details" class="page">
     <h2>🏷️ Configurar Grupos</h2>
     <div class="card">
-        <div style="margin-bottom:20px;display:flex;gap:10px;">
+        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
             <button onclick="autoAssign()" class="alt">⚡ Aleatório</button>
             <button onclick="startSeason()" class="sec">Iniciar! 🚀</button>
+        </div>
+        <div style="background:#e8faf5;border-left:4px solid #00b894;padding:10px;border-radius:6px;margin-bottom:15px;font-size:0.88em;">
+            🟢 <b>Casa de Vidro:</b> Pessoas aqui ficam fora da casa na semana 1. Votação decide quem entra — metade entra, metade é eliminada.
         </div>
         <div id="cast-details-list" class="cast-grid"></div>
     </div>
 </section>
 
 <section id="page-sim" class="page">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
         <h2 id="week-display">Semana 1</h2>
         <div id="season-badges"></div>
     </div>
@@ -142,12 +166,15 @@
                 </select>
             </div>
             <div>
-                <span class="config-label">⚡ PAREDÃO FALSO MANUAL:</span>
+                <span class="config-label">⚡ DINÂMICAS ESPECIAIS:</span>
                 <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;">
                     <input type="checkbox" id="check-fake-paredao" style="width:20px;height:20px;cursor:pointer;accent-color:#6c5ce7;">
-                    <span style="font-size:0.9em;font-weight:bold;color:#6c5ce7;">Esta semana é Paredão Falso</span>
+                    <span style="font-size:0.88em;font-weight:bold;color:#6c5ce7;">Paredão Falso esta semana</span>
                 </label>
-                <small style="color:#888;font-size:0.75em;">Marque antes de simular a semana</small>
+                <div style="margin-top:8px;">
+                    <button onclick="triggerRetorno()" class="retorno-btn" style="padding:8px 14px;font-size:0.85em;width:100%;">🔄 Retorno de Eliminado</button>
+                </div>
+                <small style="color:#888;font-size:0.75em;display:block;margin-top:4px;">Marque antes de simular a semana</small>
             </div>
         </div>
         <button id="btn-run" onclick="runWeek()" class="sec" style="width:100%;margin-top:20px;">SIMULAR SEMANA</button>
@@ -182,7 +209,11 @@
             <div id="final-podium" style="font-size:1.3em;margin-top:20px;"></div>
         </div>
         <div id="final-table-container" style="overflow-x:auto;"></div>
-        <button onclick="location.reload()" class="alt" style="margin-top:20px;width:100%;">🔄 Nova Temporada</button>
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+            <button onclick="saveFinalHistoryImage()" style="background:#6c5ce7;flex:1;">📸 Salvar Histórico Final como Imagem</button>
+            <button onclick="replayWithSameCast()" style="background:#00b894;flex:1;">🔄 Jogar com os Mesmos Participantes</button>
+            <button onclick="location.reload()" class="alt" style="flex:1;">🔄 Nova Temporada</button>
+        </div>
     </div>
 </section>
 
@@ -197,22 +228,21 @@ let exitsCounter = 0;
 let lastWeekExit = null;
 let publicFavoriteId = null;
 let publicVillainId = null;
-let favChangedWeek = 0;    // semana em que o favorito mudou pela última vez
+let favChangedWeek = 0;
 let vilChangedWeek = 0;
-let fakeParedaoWeek = 0;
-let fakeParedaoUsed = false;
-let fakeParedaoVitima = null; // guarda quem foi "eliminado" no paredão falso
-let activeGangIndices = [];   // quais grupos do pool estão ativos nesta temporada
+let fakeParedaoVitima = null;
+let activeGangIndices = [];
+let casaDeVidroActive = false; // true se tem Casa de Vidro na semana 1
+let voteHistory = []; // histórico de votação por semana: [{week, votes:[{voterName,targetName}], paredaoNomes:[]}]
 
 const rooms  = ["Lolipop","Submarino","Sertão"];
-const groups = ["Pipoca","Camarote","Veterano"];
+const groups = ["Pipoca","Camarote","Veterano","Casa de Vidro"];
 
-// Categorias especiais de jogo
-const GANG_SOLO = -1;   // joga sozinho
-const GANG_MURO = -2;   // em cima do muro
+const GANG_SOLO = -1;
+const GANG_MURO = -2;
 
 const gangPool = [
-    "Grupo da Piscina","Grupo da Academia","Grupo da Xepa",
+    "Grupo da Piscina","Grupo da Academia","Grupo da Varanda",
     "Grupo Lollipop","Grupo Sertão","Grupo Submarino",
     "Grupo Pipoca","Grupo Veterano","Grupo Camarote"
 ];
@@ -221,78 +251,93 @@ const gangPoolColors = [
     "#2980b9","#fd79a8","#27ae60","#f39c12"
 ];
 
+// ── Personalidades ──
+const personalities = [
+    "Explosivo","Instável","Emotivo","Racional","Chorão",
+    "Briguento","Grudento","Amoroso","Seco","Calculista",
+    "Leal","Falso","Dramático","Sedutor","Introspectivo",
+    "Tímido","Provocador","Protetor","Ciumento","Fofoqueiro"
+];
+
+// ── Gênero e Sexualidade ──
+const genders = ["homem_cis","homem_trans","mulher_cis","mulher_trans","nao_binario"];
+const genderLabels = {
+    "homem_cis":"Homem Cis","homem_trans":"Homem Trans",
+    "mulher_cis":"Mulher Cis","mulher_trans":"Mulher Trans","nao_binario":"Não Binário"
+};
+const sexualities = ["hetero","homo","bi","assexual"];
+const sexualityLabels = {
+    "hetero":"Heterossexual","homo":"Homossexual",
+    "bi":"Bissexual","assexual":"Assexual"
+};
+
+// ── Festa ──
+const partyEvents = [
+    "{A} bebeu até cair e precisou ser carregado(a) para o quarto",
+    "{A} vomitou no banheiro depois de exagerar nas bebidas",
+    "{A} desmaiou no sofá e ficou dormindo até o fim da festa",
+    "{A} subiu na mesa e dançou sem parar por 20 minutos",
+    "{A} chorou de emoção ao ouvir uma música que lembrava de casa",
+    "{A} deu um discurso bêbado sobre amizade verdadeira",
+    "{A} cantou uma música inteira fora do tom e constrangeu geral",
+    "{A} sumiu da festa e foi encontrado(a) dormindo no quarto",
+    "{A} tirou a camisa e pulou na piscina com roupa",
+    "{A} ficou fazendo fofoca no cantinho com aliados a noite toda",
+    "{A} caiu enquanto dançava e levou a metade da galera junto",
+    "{A} tentou cozinhar às 3 da manhã e quase incendiou a cozinha",
+    "{A} passou horas falando mal dos rivais enquanto bebia",
+    "{A} flertou abertamente com dois participantes na mesma noite",
+    "{A} contou um segredo que não devia durante a madrugada",
+    "{A} teve uma crise de riso incontrolável sem motivo aparente",
+    "{A} declarou amor para alguém na frente de todos",
+    "{A} iniciou um jogo da verdade que gerou muita confusão",
+    "{A} quebrou um copo de tanto gesticular animado(a)",
+    "{A} fez as pazes com um rival depois de alguns drinques",
+    "{A} e {B} brigaram feio e precisaram ser separados(as)!",
+    "{A} e {B} jogaram bebida um no outro no meio de uma discussão!",
+    "{A} e {B} se beijaram apaixonadamente na pista de dança! 💋",
+    "{A} e {B} se abraçaram e fizeram as pazes depois de semanas de briga!",
+    "{A} e {B} tiveram uma treta de madrugada que acordou a casa inteira!"
+];
+
 // ══════════════════════════════════════════════════════
 // LISTAS DE TEXTO
 // ══════════════════════════════════════════════════════
 const provaLiderNames = [
-    "Prova do Líder de Resistência Betano",
-    "Prova do Líder de Resistência Avon",
-    "Prova do Líder de Resistência Seara",
-    "Prova do Líder de Resistência Amstel",
-
-    "Prova do Líder de Agilidade Mercado Livre",
-    "Prova do Líder de Agilidade iFood",
-    "Prova do Líder de Agilidade Americanas",
-    "Prova do Líder de Agilidade Magalu",
-
-    "Prova do Líder de Sorte Loterias Caixa",
-    "Prova do Líder de Sorte PicPay",
-    "Prova do Líder de Sorte Stone",
-    "Prova do Líder de Sorte C&A",
-
-    "Prova do Líder de Memória McDonald's",
-    "Prova do Líder de Memória Coca-Cola",
-    "Prova do Líder de Memória Nestlé",
-    "Prova do Líder de Memória Samsung",
-
-    "Prova do Líder de Estratégia Claro",
-    "Prova do Líder de Estratégia TIM",
-    "Prova do Líder de Estratégia Vivo",
-    "Prova do Líder de Estratégia Fiat",
-
-    "Prova do Líder do Labirinto Estratégico",
-    "Prova do Líder do Desafio Final",
-    "Prova do Líder da Arena 360",
-    "Prova do Líder da Virada Impossível"
+    "Prova do Líder de Resistência Betano","Prova do Líder de Resistência Avon",
+    "Prova do Líder de Resistência Seara","Prova do Líder de Resistência Amstel",
+    "Prova do Líder de Agilidade Mercado Livre","Prova do Líder de Agilidade iFood",
+    "Prova do Líder de Agilidade Americanas","Prova do Líder de Agilidade Magalu",
+    "Prova do Líder de Sorte Loterias Caixa","Prova do Líder de Sorte PicPay",
+    "Prova do Líder de Sorte Stone","Prova do Líder de Sorte C&A",
+    "Prova do Líder de Memória McDonald's","Prova do Líder de Memória Coca-Cola",
+    "Prova do Líder de Memória Nestlé","Prova do Líder de Memória Samsung",
+    "Prova do Líder de Estratégia Claro","Prova do Líder de Estratégia TIM",
+    "Prova do Líder de Estratégia Vivo","Prova do Líder de Estratégia Fiat",
+    "Prova do Líder do Labirinto Estratégico","Prova do Líder do Desafio Final",
+    "Prova do Líder da Arena 360","Prova do Líder da Virada Impossível"
 ];
 const provaAnjoNames = [
-     "Prova do Anjo de Resistência Betano",
-    "Prova do Anjo de Resistência Avon",
-    "Prova do Anjo de Resistência Seara",
-
-    "Prova do Anjo de Agilidade Mercado Livre",
-    "Prova do Anjo de Agilidade iFood",
-    "Prova do Anjo de Agilidade Magalu",
-
-    "Prova do Anjo de Sorte Loterias Caixa",
-    "Prova do Anjo de Sorte PicPay",
-    "Prova do Anjo de Sorte Stone",
-
-    "Prova do Anjo de Memória McDonald's",
-    "Prova do Anjo de Memória Coca-Cola",
-    "Prova do Anjo de Memória Nestlé",
-
-    "Prova do Anjo de Estratégia Claro",
-    "Prova do Anjo de Estratégia TIM",
-    "Prova do Anjo de Estratégia Vivo",
-
-    "Prova do Anjo do Labirinto Premiado",
-    "Prova do Anjo da Arena Secreta",
-    "Prova do Anjo do Desafio Relâmpago",
-    "Prova do Anjo da Caixa Misteriosa",
-    "Prova do Anjo do Circuito Radical",
-    "Prova do Anjo da Escolha Final",
-    "Prova do Anjo do Quebra-Cabeça Gigante",
-    "Prova do Anjo do Cofre Surpresa",
-    "Prova do Anjo da Corrida Contra o Tempo"
+    "Prova do Anjo de Resistência Betano","Prova do Anjo de Resistência Avon",
+    "Prova do Anjo de Resistência Seara","Prova do Anjo de Agilidade Mercado Livre",
+    "Prova do Anjo de Agilidade iFood","Prova do Anjo de Agilidade Magalu",
+    "Prova do Anjo de Sorte Loterias Caixa","Prova do Anjo de Sorte PicPay",
+    "Prova do Anjo de Sorte Stone","Prova do Anjo de Memória McDonald's",
+    "Prova do Anjo de Memória Coca-Cola","Prova do Anjo de Memória Nestlé",
+    "Prova do Anjo de Estratégia Claro","Prova do Anjo de Estratégia TIM",
+    "Prova do Anjo de Estratégia Vivo","Prova do Anjo do Labirinto Premiado",
+    "Prova do Anjo da Arena Secreta","Prova do Anjo do Desafio Relâmpago",
+    "Prova do Anjo da Caixa Misteriosa","Prova do Anjo do Circuito Radical",
+    "Prova do Anjo da Escolha Final","Prova do Anjo do Quebra-Cabeça Gigante",
+    "Prova do Anjo do Cofre Surpresa","Prova do Anjo da Corrida Contra o Tempo"
 ];
 const kickReasons = [
-     "Empurrou um participante durante uma discussão acalorada.",
+    "Empurrou um participante durante uma discussão acalorada.",
     "Deu um tapa durante uma briga na festa.",
     "Jogou bebida no rosto de outro participante de forma agressiva.",
     "Quebrou objetos da casa durante um surto de raiva.",
     "Fez ameaças físicas consideradas graves pela produção.",
-    "Teve comportamento considerado violento após consumo de álcool.",
+    "Teve comportamento violento após consumo de álcool.",
     "Tentou invadir área restrita da produção.",
     "Se envolveu em agressão física no quarto.",
     "Arremessou objetos perigosos durante uma discussão.",
@@ -301,7 +346,7 @@ const kickReasons = [
     "Ignorou advertências e continuou comportamento agressivo."
 ];
 const quitReasons = [
-      "Não aguentou a pressão psicológica do confinamento.",
+    "Não aguentou a pressão psicológica do confinamento.",
     "Sentiu que estava perdendo o controle emocional.",
     "A saudade da família falou mais alto.",
     "Teve crises constantes de ansiedade.",
@@ -321,77 +366,30 @@ const elimReasons = [
     "Fez um jogo sujo e o público não perdoou.",
     "Brigou feio por causa de comida na Xepa.",
     "Ficou em cima do muro e perdeu a simpatia da galera.",
-    "Fez aliança com os vilões da edição e pagou o preço.",
-    "Teve uma postura arrogante que irritou o Brasil inteiro.",
-    "Atacou o favorito do público e se tornou o alvo número um.",
-    "Virou meme negativo nas redes sociais por uma fala polêmica.",
-    "O edit nunca foi favorável e o público mal o(a) conhecia.",
-    "Perdeu a simpatia depois de trair o melhor amigo dentro do jogo.",
+    "Fez aliança com os vilões e pagou o preço.",
+    "Teve postura arrogante que irritou o Brasil.",
+    "Atacou o favorito do público e virou alvo número um.",
+    "Virou meme negativo nas redes por uma fala polêmica.",
+    "O edit nunca foi favorável e o público mal conhecia.",
+    "Perdeu a simpatia após trair o melhor amigo no jogo.",
     "Cancelado(a) nas redes após falas polêmicas.",
-    "Virou a maior planta da temporada.",
     "Enfrentou favoritos e não teve chance.",
     "Jogou sujo e o público puniu.",
-    "Se envolveu em brigas constantes.",
     "Ficou em cima do muro e perdeu relevância.",
     "Se aliou ao grupo errado.",
-    "Teve postura arrogante que irritou o público.",
     "Atacou um favorito e virou alvo.",
-    "Virou meme negativo fora da casa.",
-    "Recebeu um edit desfavorável.",
-    "Traiu aliados e perdeu credibilidade.",
-    "Foi considerado falso(a) pelos colegas e pelo público.",
-    "Sumiu no jogo nas últimas semanas.",
     "Não se posicionou quando deveria.",
     "Exagerou nas estratégias e perdeu a mão.",
-    "Se isolou do restante da casa.",
-    "Se queimou após discussão desnecessária.",
-    "Teve atitudes vistas como incoerentes.",
-    "Prometeu muito e não entregou nada.",
     "Se vitimizou em excesso.",
     "Foi visto(a) como manipulador(a).",
-    "Perdeu o favoritismo ao longo do jogo.",
-    "Entrou em conflitos errados na hora errada.",
-    "Se tornou previsível dentro do jogo.",
     "Não criou conexões com o público.",
-    "Foi considerado(a) sem carisma.",
-    "Teve comportamento considerado forçado.",
     "Se envolveu em polêmicas repetidas.",
-    "Se perdeu emocionalmente no jogo.",
     "Tomou decisões ruins em sequência.",
-    "Foi apagado(a) pelo próprio grupo.",
-    "Subestimou adversários fortes.",
     "Caiu em narrativas negativas fora da casa.",
-    "Se tornou alvo fácil no paredão.",
-    "Não reagiu às movimentações do jogo.",
-    "Se contradisse diversas vezes.",
-    "Teve falas mal interpretadas pelo público.",
-    "Perdeu apoio após uma atitude específica.",
-    "Se acomodou na zona de conforto.",
-    "Não soube jogar sob pressão.",
-    "Se envolveu em romance que prejudicou seu jogo.",
-    "Foi considerado irrelevante na dinâmica da casa.",
-    "Errou timing em decisões importantes.",
-    "Tentou manipular demais e foi exposto(a).",
-    "Se queimou ao tentar ser vilão sem carisma.",
-    "Foi superado(a) pelos concorrentes diretos.",
-    "Não teve destaque nos momentos-chave.",
-    "Perdeu apoio do próprio grupo.",
-    "Se tornou alvo após ganhar poder demais.",
-    "Não soube usar vantagens que recebeu.",
-    "Teve desempenho fraco em provas importantes.",
-    "Foi considerado incoerente com seu próprio discurso.",
-    "Gerou rejeição acumulada ao longo das semanas.",
-    "Foi eliminado(a) como estratégia do público para proteger outro participante.",
-    "Pagou por erros do início do jogo.",
-    "Não conseguiu reverter uma imagem negativa.",
-    "Se perdeu completamente na reta final.",
-    "Foi visto como figurante no jogo.",
-    "Não conseguiu construir uma narrativa forte.",
-    "Se envolveu em conflito que virou contra ele(a).",
-    "Foi eliminado(a) por falta de engajamento do público."
+    "Não soube jogar sob pressão."
 ];
 const confessionalPhrases = [
-     "Hoje meu voto é totalmente baseado no que eu tenho visto dentro da casa.",
+    "Hoje meu voto é totalmente baseado no que tenho visto dentro da casa.",
     "Não é nada pessoal, mas o jogo exige decisões difíceis.",
     "Essa pessoa não soma no grupo e isso pesa muito.",
     "Meu voto é estratégico pensando no futuro do jogo.",
@@ -401,61 +399,43 @@ const confessionalPhrases = [
     "Prefiro me antecipar do que ser surpreendido(a).",
     "A convivência pesou bastante na minha decisão.",
     "Não é sobre gostar ou não, é sobre jogo.",
-    "Estou tentando proteger quem eu gosto aqui dentro.",
-    "Esse voto representa tudo que eu tenho sentido essa semana.",
+    "Esse voto representa tudo que tenho sentido essa semana.",
     "Não me sinto confortável com essa pessoa aqui.",
-    "Já esperava que esse momento chegaria.",
     "Esse voto é consequência das atitudes dentro da casa."
 ];
 const confessionalPhrasesRival = [
     "Essa rivalidade já passou de qualquer limite.",
     "Não consigo mais dividir o mesmo espaço com essa pessoa.",
-    "É um confronto direto e inevitável.",
     "Enquanto essa pessoa estiver aqui, meu jogo não anda.",
     "Essa é uma guerra declarada dentro da casa.",
-    "Não existe mais diálogo possível.",
-    "Essa pessoa é meu maior obstáculo aqui.",
-    "Tudo que ela faz me incomoda profundamente.",
-    "É uma questão de eliminar ou ser eliminado.",
     "Meu voto é direto e sem arrependimento."
 ];
 const confessionalPhrasesBetrayal = [
     "Eu sei que isso pode acabar com minha imagem, mas é o jogo.",
     "Estou traindo agora pra não ser traído depois.",
-    "É uma escolha difícil, mas necessária.",
     "Meu coração tá apertado, mas eu preciso pensar em mim.",
     "Isso aqui não é amizade, é jogo.",
-    "Depois eu resolvo lá fora, agora eu preciso jogar.",
-    "Se eu não fizer isso, vão fazer comigo.",
-    "Hoje eu escolhi o jogo ao invés da lealdade.",
-    "É uma jogada arriscada, mas pode mudar tudo.",
-    "Peço desculpas, mas não posso me colocar em risco."
+    "Se eu não fizer isso, vão fazer comigo."
 ];
-
-
 const monstroPunishments = [
-     "se vestir de galinha e ficar cacarejando pela casa",
+    "se vestir de galinha e ficar cacarejando pela casa",
     "andar pulando em um pé só por 12 horas",
-    "montar um castelo de cartas sem deixar cair",
     "falar apenas cantando por 24 horas",
     "imitar um robô toda vez que alguém falar com você",
     "dançar sempre que tocar música, sem parar",
     "ficar abraçado em um boneco gigante o dia inteiro",
     "latir sempre que alguém disser seu nome",
     "usar fantasia de bebê e pedir colo",
-    "andar vendado sendo guiado pelos outros",
     "carregar um objeto inútil o tempo todo",
     "fingir ser um garçom e servir a casa inteira",
     "só se locomover engatinhando",
-    "rir de tudo, sem exceção",
     "responder todas as perguntas com perguntas",
     "falar só no diminutivo",
-    "agir como estátua por períodos aleatórios",
     "cantar o que estiver fazendo",
     "imitar um narrador esportivo o dia todo"
 ];
 const vipDescriptions = [
-      "churrasco completo com picanha e cerveja 🍖🍺",
+    "churrasco completo com picanha e cerveja 🍖🍺",
     "rodízio de pizza e sobremesas 🍕🍨",
     "sushi, sashimi e drinks tropicais 🍣🍹",
     "hambúrguer artesanal e milkshake 🍔🥤",
@@ -464,12 +444,10 @@ const vipDescriptions = [
     "fondue doce e salgado com vinho 🍫🫕",
     "café da manhã premium com tudo liberado 🥐☕",
     "buffet internacional com massas e carnes 🍝",
-    "comida mexicana com tacos e nachos 🌮",
-    "jantar italiano completo com sobremesas 🍝🍰",
-    "open bar e petiscos variados 🍸🍟"
+    "comida mexicana com tacos e nachos 🌮"
 ];
 const xepaDescriptions = [
-     "arroz, feijão e ovo cozido 🍚🥚",
+    "arroz, feijão e ovo cozido 🍚🥚",
     "macarrão simples com molho ralo 🍝",
     "pão com margarina e café preto 🥖☕",
     "arroz puro e água 🍚",
@@ -478,11 +456,7 @@ const xepaDescriptions = [
     "biscoito seco e chá 🍪",
     "restos reaproveitados da semana 🥡",
     "arroz queimado e feijão frio 😬",
-    "polenta sem acompanhamento 🥲",
-    "mingau ralo e sem açúcar 🥣",
-    "apenas pão duro e água 🥖",
-    "farofa seca com ovo 🍳",
-    "comida limitada e racionada 🍽️"
+    "mingau ralo e sem açúcar 🥣"
 ];
 const discordiaTopics = [
     "Quem aqui joga mais sujo?",
@@ -498,16 +472,36 @@ const discordiaTopics = [
 ];
 const namesBank = ["Lucas Andrade","Mariana Ferreira","Rafael Costa","Juliana Martins","Bruno Oliveira","Camila Rocha","Felipe Almeida","Beatriz Souza","Gustavo Ribeiro","Larissa Carvalho","Eduardo Gomes","Renata Barros","Tiago Nascimento","Aline Teixeira","Vinícius Pires","Patrícia Cardoso","Daniel Moreira","Fernanda Batista","Rodrigo Lopes","Vanessa Duarte"];
 
+// ── Distribuição realista: 70% cis, 70% hetero ──
+function randomGender() {
+    const r = Math.random();
+    if (r < 0.38) return 'homem_cis';
+    if (r < 0.72) return 'mulher_cis';
+    if (r < 0.82) return 'homem_trans';
+    if (r < 0.92) return 'mulher_trans';
+    return 'nao_binario';
+}
+function randomSexuality() {
+    const r = Math.random();
+    if (r < 0.70) return 'hetero';
+    if (r < 0.84) return 'homo';
+    if (r < 0.94) return 'bi';
+    return 'assexual';
+}
+
 // ══════════════════════════════════════════════════════
 // UTILIDADES
 // ══════════════════════════════════════════════════════
 function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
 function getGroupColor(g) {
     if (g === 'Pipoca') return 'var(--pipoca)';
     if (g === 'Camarote') return 'var(--camarote)';
     if (g === 'Veterano') return 'var(--veterano)';
+    if (g === 'Casa de Vidro') return 'var(--casavidro)';
     return '#ccc';
 }
+
 function gangLabel(gangIdx) {
     if (gangIdx === GANG_SOLO) return '🎯 Solo';
     if (gangIdx === GANG_MURO) return '🪨 Muro';
@@ -519,11 +513,45 @@ function gangColor(gangIdx) {
     return gangPoolColors[gangIdx] || '#aaa';
 }
 
-// Altera relação com amortecimento para relacionamentos estabelecidos
+// ── Compatibilidade Romântica ──
+function isMasc(gender) {
+    return gender === 'homem_cis' || gender === 'homem_trans';
+}
+function isFem(gender) {
+    return gender === 'mulher_cis' || gender === 'mulher_trans';
+}
+function areRomanticallyCompatible(p1, p2) {
+    if (p1.sexuality === 'assexual' || p2.sexuality === 'assexual') return false;
+    if (p1.sexuality === 'bi' || p2.sexuality === 'bi') return true;
+    const p1m = isMasc(p1.gender), p2m = isMasc(p2.gender);
+    if (p1.sexuality === 'hetero' && p2.sexuality === 'hetero') {
+        return p1m !== p2m;
+    }
+    if (p1.sexuality === 'homo' && p2.sexuality === 'homo') {
+        return p1m === p2m;
+    }
+    // Hetero + homo: incompatível
+    return false;
+}
+
+// ── Efeito de personalidade ──
+function fightBias(p) {
+    const f = ['Explosivo','Briguento','Instável','Provocador'];
+    return f.includes(p.personality) ? 0.18 : 0.07;
+}
+function romanceBias(p) {
+    const r = ['Amoroso','Grudento','Sedutor','Ciumento'];
+    return r.includes(p.personality) ? 0.18 : 0.07;
+}
+function betrayalBias(p) {
+    const b = ['Falso','Calculista'];
+    return b.includes(p.personality) ? 0.18 : 0.06;
+}
+
 function changeRelation(p, targetId, delta) {
     const cur = p.relations[targetId] || 0;
     const isStable = Math.abs(cur) > 40;
-    const effective = isStable ? delta * 0.4 : delta; // relacionamentos estáveis mudam mais devagar
+    const effective = isStable ? delta * 0.4 : delta;
     p.relations[targetId] = cur + effective;
 }
 
@@ -538,49 +566,34 @@ function getConfessionalPhrase(voter, target) {
 // GRUPOS / GANGS
 // ══════════════════════════════════════════════════════
 function initGroups(pList) {
-    // Escolhe 2 ou 3 grupos ativos da temporada
     const shuffled = [...gangPool.keys()].sort(() => 0.5 - Math.random());
-    const numGroups = 2 + Math.floor(Math.random() * 2); // 2 ou 3
+    const numGroups = 2 + Math.floor(Math.random() * 2);
     activeGangIndices = shuffled.slice(0, numGroups);
-
     pList.forEach((p, i) => {
         const r = Math.random();
-        if (r < 0.65) {
-            // entra num grupo ativo
-            p.gang = activeGangIndices[i % activeGangIndices.length];
-        } else if (r < 0.82) {
-            p.gang = GANG_MURO; // em cima do muro
-        } else {
-            p.gang = GANG_SOLO; // joga solo
-        }
+        if (r < 0.65) p.gang = activeGangIndices[i % activeGangIndices.length];
+        else if (r < 0.82) p.gang = GANG_MURO;
+        else p.gang = GANG_SOLO;
     });
-
-    // Bônus de relação para membros do mesmo grupo
     pList.forEach(p => {
         if (p.gang < 0) return;
         pList.forEach(o => {
-            if (o.gang === p.gang && o.id !== p.id) {
-                p.relations[o.id] = (p.relations[o.id] || 0) + 18;
-            }
+            if (o.gang === p.gang && o.id !== p.id) p.relations[o.id] = (p.relations[o.id] || 0) + 18;
         });
     });
 }
 
-// Dinâmica semanal dos grupos
 function updateGroupDynamics(actives) {
     let log = "";
     const activeGroups = [...new Set(actives.filter(p => p.gang >= 0).map(p => p.gang))];
-
     actives.forEach(p => {
         const r = Math.random();
         if (p.gang >= 0) {
             if (r < 0.05) {
-                // Racha: vai jogar solo
                 log += `💔 <b>${p.name}</b> rachou com o grupo e decidiu jogar solo! `;
                 actives.filter(o => o.gang === p.gang).forEach(o => { changeRelation(p, o.id, -15); });
                 p.gang = GANG_SOLO;
             } else if (r < 0.09 && activeGroups.length > 1) {
-                // Troca de lado!
                 const otherGroups = activeGroups.filter(g => g !== p.gang);
                 const newGang = otherGroups[Math.floor(Math.random() * otherGroups.length)];
                 log += `🔄 <b>${p.name}</b> trocou de lado e se juntou ao ${gangPool[newGang]}! `;
@@ -602,7 +615,55 @@ function updateGroupDynamics(actives) {
 }
 
 // ══════════════════════════════════════════════════════
-// OPINIÃO PÚBLICA (favorito / vilão)
+// FESTA DA SEMANA
+// ══════════════════════════════════════════════════════
+function runParty(actives) {
+    const numEvents = 3 + Math.floor(Math.random() * 3); // 3 a 5 eventos
+    const partyName = rnd(["Festa do Líder","Festa da Casa","Festa Temática","Festa com Patrocinador","Festa Surpresa da Produção"]);
+    let events = "";
+    const usedPairs = new Set();
+
+    for (let i = 0; i < numEvents; i++) {
+        const template = rnd(partyEvents);
+        const needsTwo = template.includes('{B}');
+        const p1 = rnd(actives);
+        if (needsTwo) {
+            let candidates;
+            if (template.includes('beijaram') || template.includes('romance')) {
+                candidates = actives.filter(o => o.id !== p1.id && areRomanticallyCompatible(p1, o));
+                if (!candidates.length) candidates = actives.filter(o => o.id !== p1.id);
+            } else {
+                candidates = actives.filter(o => o.id !== p1.id);
+            }
+            if (!candidates.length) continue;
+            const p2 = rnd(candidates);
+            const pairKey = [p1.id, p2.id].sort().join('-');
+            if (usedPairs.has(pairKey)) continue;
+            usedPairs.add(pairKey);
+            const txt = template.replace('{A}', `<b>${p1.name}</b>`).replace('{B}', `<b>${p2.name}</b>`);
+            events += `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.2)">🎉 ${txt}</div>`;
+            // Efeito social
+            if (template.includes('beijaram') || template.includes('amor')) {
+                changeRelation(p1, p2.id, 30); changeRelation(p2, p1.id, 30);
+            } else if (template.includes('brigaram') || template.includes('bebida') || template.includes('treta')) {
+                changeRelation(p1, p2.id, -25); changeRelation(p2, p1.id, -25);
+            } else if (template.includes('pazes')) {
+                changeRelation(p1, p2.id, 20); changeRelation(p2, p1.id, 20);
+            }
+        } else {
+            const txt = template.replace('{A}', `<b>${p1.name}</b>`);
+            events += `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.2)">🎉 ${txt}</div>`;
+        }
+    }
+
+    return `<div class="party-box">
+        <div style="font-size:1.1em;font-weight:bold;margin-bottom:10px">🎊 ${partyName} — Semana ${week}</div>
+        ${events}
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// OPINIÃO PÚBLICA
 // ══════════════════════════════════════════════════════
 function initPublicOpinion(pList) {
     const sorted = [...pList].sort((a,b) => b.popularity - a.popularity);
@@ -612,31 +673,25 @@ function initPublicOpinion(pList) {
 }
 
 function updatePublicOpinion(actives) {
-    // Garante que as referências ainda existem
     if (!actives.find(p => p.id === publicFavoriteId)) {
         publicFavoriteId = actives.sort((a,b) => b.popularity - a.popularity)[0].id;
     }
     if (!actives.find(p => p.id === publicVillainId)) {
         publicVillainId = actives.sort((a,b) => b.rejection - a.rejection)[0].id;
     }
-
-    // 40% de chance de o favorito perder o favoritismo
     if (Math.random() < 0.40) {
         const fav = actives.find(p => p.id === publicFavoriteId);
         const candidates = actives.filter(p => p.id !== publicFavoriteId);
         if (candidates.length > 0) {
             const newFav = candidates[Math.floor(Math.random() * candidates.length)];
-            addLog(`📱 VIRADA! O público está mudando de favorito: ${fav.name} → ${newFav.name}!`, "info");
-            if (fav) fav.popularity -= 12 + Math.random() * 8; // perde popularidade
+            addLog(`📱 VIRADA! O público está mudando de favorito: ${fav?.name} → ${newFav.name}!`, "info");
+            if (fav) fav.popularity -= 12 + Math.random() * 8;
             newFav.popularity += 10 + Math.random() * 10;
             publicFavoriteId = newFav.id;
             favChangedWeek = week;
         }
     }
-
-    // 30% de chance do vilão se redimir (cai nas graças do público)
     if (Math.random() < 0.30) {
-        const vil = actives.find(p => p.id === publicVillainId);
         const newVil = actives.sort((a,b) => b.rejection - a.rejection)[0];
         if (newVil && newVil.id !== publicVillainId) {
             addLog(`📊 O público está voltando os olhos para ${newVil.name} como o(a) novo(a) vilão(ã).`, "info");
@@ -644,14 +699,13 @@ function updatePublicOpinion(actives) {
             vilChangedWeek = week;
         }
     } else {
-        // Vilão continua acumulando rejeição
         const vil = actives.find(p => p.id === publicVillainId);
         if (vil) vil.rejection = Math.min(100, vil.rejection + 5);
     }
 }
 
 // ══════════════════════════════════════════════════════
-// VIP / XEPA (baseado nas alianças do líder)
+// VIP / XEPA
 // ══════════════════════════════════════════════════════
 function assignXepaVip(actives, lider) {
     actives.forEach(p => { p.isVip = false; p.isMonstro = false; });
@@ -671,11 +725,10 @@ function runJogoDiscordia(actives) {
     const topic = rnd(discordiaTopics);
     let nominations = {};
     let rows = "";
-
     actives.forEach(p => {
         let targets = actives.filter(o => o !== p);
         let alvo;
-        const drama = Math.random() < 0.15; // drama: aponta aliado
+        const drama = Math.random() < 0.15;
         if (drama) {
             const allies = targets.filter(o => (p.relations[o.id]||0) > 20);
             alvo = allies.length > 0 ? rnd(allies) : targets.sort((a,b) => (p.relations[a.id]||0) - (p.relations[b.id]||0))[0];
@@ -689,16 +742,13 @@ function runJogoDiscordia(actives) {
         const dramaTag = drama ? ' <span style="color:#ffeaa7;font-size:0.8em">⚠️ surpresa!</span>' : '';
         rows += `<div style="padding:4px 0;border-bottom:1px solid #444;font-size:0.85em">👉 <b>${p.name}</b> apontou <b>${alvo.name}</b>${dramaTag}</div>`;
     });
-
     const sorted = Object.entries(nominations).sort((a,b) => b[1]-a[1]);
     const vilaoNome = sorted[0][0];
     const vilaoVotos = sorted[0][1];
     const vilao = participants.find(p => p.name === vilaoNome);
     if (vilao) vilao.rejection = Math.min(100, vilao.rejection + 15);
-
     addLog(`🎯 JOGO DA DISCÓRDIA: "${topic}"`, "info");
     addLog(`💥 ${vilaoNome} foi o(a) mais apontado(a) com ${vilaoVotos} votos! Rejeição +15!`, "danger");
-
     return `<div class="discordia-box">
         <div style="font-size:1.05em;font-weight:bold;margin-bottom:10px">🎯 JOGO DA DISCÓRDIA — <em>"${topic}"</em></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">${rows}</div>
@@ -707,72 +757,39 @@ function runJogoDiscordia(actives) {
 }
 
 // ══════════════════════════════════════════════════════
-// GERAÇÃO DE PORCENTAGENS DO PAREDÃO
-// Garante SEMPRE que o eliminado tem a MAIOR porcentagem
+// PORCENTAGENS DO PAREDÃO
+// Garante eliminado com MAIOR porcentagem
 // ══════════════════════════════════════════════════════
 function generateElimPcts(scores) {
     const elim = scores[0].p;
-    const nSurv = scores.length - 1; // sobreviventes
-    const n = scores.length;           // total no paredão
-
-    // Decide o modo baseado na rejeição do eliminado
+    const nSurv = scores.length - 1;
+    const n = scores.length;
     const cancelChance = Math.min(0.55, (elim.rejection / 100) + 0.05);
     const r = Math.random();
     let mode = 'normal';
     if (r < cancelChance) mode = 'cancelado';
     else if (r < cancelChance + 0.28) mode = 'acirrado';
-
-    // --- p1 mínimo para garantir ser o maior ---
-    // Para n pessoas com igual distribuição, cada uma levaria 100/n.
-    // p1 precisa ser > 100/n para ser o maior.
-    // Com survivors capados em (p1-1), temos: p1 + (p1-1)*nSurv >= 100
-    // → p1_min = (100 + nSurv) / (nSurv + 1)  [= 100/n quando simplificado]
-    const p1Min = (100 + nSurv) / (n); // ligeiramente acima de 100/n
-
+    const p1Min = (100 + nSurv) / n;
     let p1Raw;
-    if (mode === 'cancelado') {
-        p1Raw = 78 + Math.random() * 20;       // 78-98%
-    } else if (mode === 'acirrado') {
-        p1Raw = p1Min + 1 + Math.random() * 7; // minimamente acima, mas perto
-    } else {
-        p1Raw = p1Min + 15 + Math.random() * 20; // confortavelmente acima
-    }
-
-    // Garante o mínimo matematicamente necessário
+    if (mode === 'cancelado') p1Raw = 78 + Math.random() * 20;
+    else if (mode === 'acirrado') p1Raw = p1Min + 1 + Math.random() * 7;
+    else p1Raw = p1Min + 15 + Math.random() * 20;
     const p1 = Math.min(98.9, Math.max(p1Raw, p1Min + 0.5));
-
-    // Distribui o restante entre os sobreviventes
-    // Cada survivor é capado em (p1 - 1) para jamais superar o eliminado
     const remaining = 100 - p1;
     const survCap = p1 - 1;
-
-    // Se o cap é pequeno demais para distribuir o restante, ajusta
-    // Caso extremo: nSurv=1, p1=42 → remaining=58 > survCap=41. Nesse caso sobe p1.
     let finalP1 = p1;
     if (remaining > survCap * nSurv) {
-        // p1 mínimo onde remaining <= survCap*nSurv:
-        // 100 - p1 <= (p1-1)*nSurv → 100+nSurv <= p1*(nSurv+1) → p1 >= (100+nSurv)/(nSurv+1)
         finalP1 = Math.ceil(((100 + nSurv) / (nSurv + 1)) * 100) / 100 + 0.5;
     }
-
     const rem2 = 100 - finalP1;
     const cap2 = finalP1 - 1;
-
     let raws = Array.from({length: nSurv}, () => Math.random());
     const rawSum = raws.reduce((a,b) => a+b, 0);
     let survPcts = raws.map(v => Math.min((rem2 * v / rawSum), cap2));
-
-    // Renormaliza para somar exatamente rem2
     const pSum = survPcts.reduce((a,b) => a+b, 0);
     if (pSum > 0) survPcts = survPcts.map(v => (v / pSum) * rem2);
-
-    // Verificação final (paranoia)
     const maxSurv = Math.max(...survPcts);
-    if (maxSurv >= finalP1) {
-        // Redistribui uniformemente
-        survPcts = survPcts.map(() => rem2 / nSurv);
-    }
-
+    if (maxSurv >= finalP1) survPcts = survPcts.map(() => rem2 / nSurv);
     return {
         p1: finalP1.toFixed(2),
         survivorPcts: survPcts.map(v => parseFloat(v).toFixed(2)),
@@ -781,7 +798,41 @@ function generateElimPcts(scores) {
 }
 
 // ══════════════════════════════════════════════════════
-// SETUP — TELA INICIAL
+// PORCENTAGENS DA FINAL (vencedor sempre maior)
+// ══════════════════════════════════════════════════════
+function generateFinalPcts(isFav, isVil) {
+    // Determina o modo
+    const r = Math.random();
+    let mode = 'normal';
+    if (isFav && r < 0.45) mode = 'landslide';     // favorito vence com folga
+    else if (r < 0.25) mode = 'tight';              // final acirrada entre top 2
+
+    let p1, p2, p3;
+    if (mode === 'landslide') {
+        p1 = 75 + Math.random() * 18;               // 75–93%
+        const rem = 100 - p1;
+        p2 = rem * (0.55 + Math.random() * 0.25);
+        p3 = 100 - p1 - p2;
+    } else if (mode === 'tight') {
+        p1 = 36 + Math.random() * 10;               // 36–46%
+        p2 = p1 - 2 - Math.random() * 8;            // Ligeiramente menor
+        p3 = 100 - p1 - p2;
+    } else {
+        p1 = 45 + Math.random() * 20;               // 45–65%
+        const rem = 100 - p1;
+        p2 = rem * (0.45 + Math.random() * 0.25);
+        p3 = 100 - p1 - p2;
+    }
+    // Garante ordem correta e valores positivos
+    if (p3 < 1) { p3 = 1 + Math.random() * 2; p2 = 100 - p1 - p3; }
+    if (p2 <= p3) { const tmp = p2; p2 = p3; p3 = tmp; }
+    if (p2 >= p1) { p2 = p1 - 1 - Math.random() * 3; p3 = 100 - p1 - p2; }
+    if (p3 <= 0) { p3 = 0.5; p2 = 100 - p1 - p3; }
+    return { p1: parseFloat(p1.toFixed(2)), p2: parseFloat(p2.toFixed(2)), p3: parseFloat(p3.toFixed(2)), mode };
+}
+
+// ══════════════════════════════════════════════════════
+// SETUP
 // ══════════════════════════════════════════════════════
 function randomizeCast() {
     const s = [...namesBank].sort(() => 0.5 - Math.random());
@@ -793,6 +844,9 @@ function goToDetails() {
     participants = n.map((name,i) => ({
         id: i, name,
         room: rooms[0], group: groups[0],
+        gender: randomGender(),
+        sexuality: randomSexuality(),
+        personality: rnd(personalities),
         gang: 0,
         active: true, history: [],
         relations: {},
@@ -816,10 +870,19 @@ function renderDetails() {
         div.innerHTML += `<div class="p-card" id="pcard-${i}" style="border-top:5px solid ${bc};">
             <strong>${p.name}</strong><br>
             <select onchange="participants[${i}].group=this.value;document.getElementById('pcard-${i}').style.borderTopColor=getGroupColor(this.value);">
-                ${groups.map(g=>`<option value="${g}" ${p.group===g?'selected':''}>${g}</option>`).join('')}
+                ${groups.map(g=>`<option value="${g}" ${p.group===g?'selected':''}>${g==='Casa de Vidro'?'🟢 '+g:g}</option>`).join('')}
             </select>
             <select onchange="participants[${i}].room=this.value">
                 ${rooms.map(r=>`<option value="${r}" ${p.room===r?'selected':''}>${r}</option>`).join('')}
+            </select>
+            <select onchange="participants[${i}].gender=this.value" title="Gênero">
+                ${genders.map(g=>`<option value="${g}" ${p.gender===g?'selected':''}>${genderLabels[g]}</option>`).join('')}
+            </select>
+            <select onchange="participants[${i}].sexuality=this.value" title="Sexualidade">
+                ${sexualities.map(s=>`<option value="${s}" ${p.sexuality===s?'selected':''}>${sexualityLabels[s]}</option>`).join('')}
+            </select>
+            <select onchange="participants[${i}].personality=this.value" title="Personalidade">
+                ${personalities.map(ps=>`<option value="${ps}" ${p.personality===ps?'selected':''}>${ps}</option>`).join('')}
             </select>
         </div>`;
     });
@@ -827,19 +890,182 @@ function renderDetails() {
 
 function autoAssign() {
     participants.forEach(p => {
-        p.group = groups[Math.floor(Math.random()*groups.length)];
-        p.room  = rooms[Math.floor(Math.random()*rooms.length)];
+        p.group  = rnd(groups.slice(0,3)); // não aleatório pra Casa de Vidro no auto-assign
+        p.room   = rnd(rooms);
+        p.gender = randomGender();
+        p.sexuality = randomSexuality();
+        p.personality = rnd(personalities);
     });
     renderDetails();
 }
 
+// ══════════════════════════════════════════════════════
+// CASA DE VIDRO
+// ══════════════════════════════════════════════════════
+function runCasaDeVidro() {
+    const vidro = participants.filter(p => p.group === 'Casa de Vidro');
+    if (!vidro.length) return false;
+
+    casaDeVidroActive = true;
+    const entering = Math.floor(vidro.length / 2);
+    const staying = vidro.length - entering;
+
+    addLog(`🟢 CASA DE VIDRO! ${vidro.length} candidatos disputam ${entering} vagas!`, "info");
+
+    // Votação pública: quem o público quer que entre
+    const scores = vidro.map(p => ({
+        p,
+        score: p.popularity + Math.random() * 40 - p.rejection * 0.5
+    }));
+    scores.sort((a,b) => b.score - a.score);
+
+    const entram = scores.slice(0, entering).map(s => s.p);
+    const eliminados = scores.slice(entering).map(s => s.p);
+
+    let html = `<div class="casavidro-banner">🟢 CASA DE VIDRO — Semana 1<br>
+        <small style="font-size:0.75em;font-weight:normal;">O público votou para escolher quem entra na casa!</small></div>`;
+
+    html += `<div class="narrative-box"><h3>🟢 Resultado da Casa de Vidro</h3>`;
+
+    const pcts = scores.map((s,i) => {
+        let base = i < entering ? 55 + Math.random() * 30 : 20 + Math.random() * 30;
+        return base;
+    });
+    // Normalizar para uma escala relativa
+    const total = pcts.reduce((a,b) => a+b, 0);
+    const normalized = pcts.map(v => ((v/total)*100).toFixed(1));
+
+    html += `<div style="margin-bottom:10px;"><b>Resultado da votação (quem o público quer que entre):</b></div>`;
+    scores.forEach((s,i) => {
+        const entrando = i < entering;
+        html += `<div style="padding:6px;margin:3px 0;border-radius:6px;background:${entrando?'#d4f8ed':'#fde8e8'}">
+            ${entrando?'✅':'❌'} <b>${s.p.name}</b> — ${normalized[i]}% ${entrando?'<span style="color:#00b894;font-weight:bold">ENTRA!</span>':'<span style="color:#ff4757;font-weight:bold">ELIMINADO(A)</span>'}
+        </div>`;
+    });
+    html += `</div>`;
+
+    // Processa entradas e eliminações
+    entram.forEach(p => {
+        p.group = 'Pipoca'; // entram como Pipoca
+        p.active = true;    // BUG FIX: ativar para participar da temporada!
+        p.cameFromVidro = true; // flag visual — sem entrada no histórico!
+        // Inicializar relações com quem já estava na casa
+        participants.filter(o => o.id !== p.id && o.group !== 'Casa de Vidro').forEach(o => {
+            if (!p.relations[o.id]) p.relations[o.id] = (Math.random()*20)-10;
+            if (!o.relations[p.id]) o.relations[p.id] = (Math.random()*20)-10;
+        });
+        addLog(`✅ ${p.name} ENTROU pela Casa de Vidro!`, "info");
+    });
+    eliminados.forEach(p => {
+        p.active = false;
+        p.eliminatedByVidro = true; // flag — sem entrada no histórico!
+        elimOrder.push(p);
+        addLog(`❌ ${p.name} eliminado(a) pela Casa de Vidro.`, "danger");
+    });
+
+    document.getElementById('narrative-area').innerHTML = html;
+    document.getElementById('votos-container').style.display = "none";
+    document.getElementById('summary-area').style.display = "block";
+    document.getElementById('btn-next').textContent = "INICIAR SEMANA 1 ➔";
+    document.getElementById('btn-next').onclick = () => {
+        week++; // Semana 0 → Semana 1
+        document.getElementById('week-display').innerText = "Semana " + week;
+        document.getElementById('summary-area').style.display = "none";
+        document.getElementById('narrative-area').innerHTML = "";
+        updateBadges();
+    };
+    renderTable('live-table-container');
+    document.getElementById('alliance-container').innerHTML = `
+        <div class="casavidro-banner" style="font-size:0.95em;">
+            🟢 <b>Entraram pela Casa de Vidro:</b> ${entram.map(p=>p.name).join(', ')}<br>
+            ❌ <b>Eliminados:</b> ${eliminados.map(p=>p.name).join(', ')}
+        </div>`;
+    return true;
+}
+
+// ══════════════════════════════════════════════════════
+// RETORNO DE ELIMINADO
+// ══════════════════════════════════════════════════════
+function triggerRetorno() {
+    // Participantes da Casa de Vidro eliminados nunca entraram oficialmente — não podem retornar
+    const eliminados = elimOrder.filter(p => !p.active && p.history[p.history.length-1] !== 'DES' && !p.eliminatedByVidro);
+    if (!eliminados.length) {
+        alert('Nenhum eliminado disponível para retornar!');
+        return;
+    }
+    const actives = participants.filter(p => p.active);
+    if (actives.length < 3) {
+        alert('Não é possível fazer retorno com menos de 3 participantes ativos.');
+        return;
+    }
+
+    addLog(`🔄 RETORNO! Todos os eliminados entram numa votação!`, "info");
+
+    // Votação: público vota no favorito para voltar
+    const scores = eliminados.map(p => ({
+        p,
+        score: p.popularity + Math.random() * 50 - p.rejection * 0.3
+    }));
+    scores.sort((a,b) => b.score - a.score);
+
+    const retornando = scores[0].p;
+
+    // Porcentagens
+    const total = scores.reduce((sum,s) => sum + s.score, 0);
+    const pcts = scores.map(s => Math.max(0, (s.score/total)*100));
+    const pctMax = Math.max(...pcts);
+    const pctNorm = pcts.map(v => ((v/pcts.reduce((a,b)=>a+b,0))*100).toFixed(1));
+
+    let html = `<div class="retorno-banner">🔄 VOTAÇÃO DE RETORNO!<br>
+        <small style="font-size:0.75em;font-weight:normal;">O público votou no favorito para voltar ao jogo!</small></div>`;
+    html += `<div class="narrative-box"><h3>🔄 Resultado do Retorno</h3>`;
+    scores.forEach((s,i) => {
+        html += `<div style="padding:6px;margin:3px 0;border-radius:6px;background:${i===0?'#d4f8ed':'#f5f5f5'}">
+            ${i===0?'🏆':'👤'} <b>${s.p.name}</b> — ${pctNorm[i]}% ${i===0?'<span style="color:#00b894;font-weight:bold">RETORNA!</span>':''}
+        </div>`;
+    });
+    html += `</div>`;
+
+    // Processa retorno
+    retornando.active = true;
+    retornando.returned = true; // marca visual na tabela
+    // Não adiciona nada ao histórico — o retorno não ocupa semana
+    // Remove da elimOrder
+    const idx = elimOrder.findIndex(p => p.id === retornando.id);
+    if (idx !== -1) elimOrder.splice(idx, 1);
+
+    addLog(`🎉 ${retornando.name} RETORNOU À CASA!`, "info");
+
+    document.getElementById('narrative-area').innerHTML += html;
+    renderTable('live-table-container');
+    updateBadges();
+}
+
+// ══════════════════════════════════════════════════════
+// INÍCIO DA TEMPORADA
+// ══════════════════════════════════════════════════════
 function startSeason() {
-    fakeParedaoWeek = 0; // controlado apenas pelo checkbox manual
-    initGroups(participants);
+    const temVidro = participants.some(p => p.group === 'Casa de Vidro');
+    // Inicia grupos só para quem não é Casa de Vidro
+    const normalParticipants = participants.filter(p => p.group !== 'Casa de Vidro');
+    initGroups(normalParticipants);
+    // Casa de Vidro começa inactive
+    participants.filter(p => p.group === 'Casa de Vidro').forEach(p => {
+        p.active = false;
+        p.gang = GANG_SOLO;
+    });
     initPublicOpinion(participants);
     document.getElementById('page-details').classList.remove('active');
     document.getElementById('page-sim').classList.add('active');
-    updateBadges();
+
+    if (temVidro) {
+        week = 0; // Semana especial Casa de Vidro
+        document.getElementById('week-display').innerText = "Casa de Vidro";
+        updateBadges();
+        runCasaDeVidro();
+    } else {
+        updateBadges();
+    }
 }
 
 // ══════════════════════════════════════════════════════
@@ -847,7 +1073,6 @@ function startSeason() {
 // ══════════════════════════════════════════════════════
 function runWeek() {
     let actives = participants.filter(p => p.active);
-
     if (actives.length <= 3) return runTop3Final(actives);
     if (actives.length === 4) return runTop4Week(actives);
 
@@ -861,37 +1086,43 @@ function runWeek() {
     // ── DESISTÊNCIA / EXPULSÃO ──
     let narrativeExtra = "";
     if (exitsCounter < 2 && week > 1 && actives.length > 5) {
-    const exitChance = Math.min(0.25, 0.10 + (week * 0.025));
-
-    const teveExitRecente = lastWeekExit && lastWeekExit.week >= week - 1;
-    if (teveExitRecente) return;
-
-    if (Math.random() < exitChance) {
-        const azarado = rnd(actives);
-        const isExpulsao = Math.random() > 0.65; // expulsão mais rara
-        const motivo = isExpulsao ? rnd(kickReasons) : rnd(quitReasons);
-        const tipoEvento = isExpulsao ? "FOI EXPULSO(A)" : "DESISTIU";
-        const emoji = isExpulsao ? "🚨" : "😢";
-        const cls = isExpulsao ? "expulsao" : "desistencia";
-
-        narrativeExtra = `<div class="exit-banner ${cls}">${emoji} <b>${azarado.name} ${tipoEvento} DO PROGRAMA!</b><br>
-            <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${motivo}</span></div>`;
-
-        lastWeekExit = { name: azarado.name, tipo: tipoEvento, emoji, motivo, cls, week };
-
-        azarado.active = false;
-        while (azarado.history.length < week-1) azarado.history.push("-");
-        azarado.history.push("DES");
-
-        elimOrder.push(azarado);
-        exitsCounter++;
-
-        actives = participants.filter(p => p.active);
-
-        if (actives.length <= 3) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop3Final(actives); }
-        if (actives.length === 4) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop4Week(actives); }
+        const exitChance = Math.min(0.25, 0.10 + (week * 0.025));
+        const teveExitRecente = lastWeekExit && lastWeekExit.week >= week - 1;
+        if (!teveExitRecente && Math.random() < exitChance) {
+            // Personalidade influencia quem sai e como
+            const exitWeights = actives.map(p => {
+                let w = 1;
+                if (['Instável','Emotivo','Chorão','Dramático'].includes(p.personality)) w = 3.2;
+                else if (['Briguento','Explosivo','Provocador'].includes(p.personality)) w = 2.5;
+                return w;
+            });
+            const totalEW = exitWeights.reduce((a,b)=>a+b,0);
+            let rEW = Math.random()*totalEW, cEW = 0, azaIdx = 0;
+            for (let i=0;i<exitWeights.length;i++) { cEW+=exitWeights[i]; if(rEW<=cEW){azaIdx=i;break;} }
+            const azarado = actives[azaIdx];
+            // Briguento/Explosivo → expulsão mais provável; Instável/Emotivo → desistência mais provável
+            const isExpulsao = ['Briguento','Explosivo','Provocador'].includes(azarado.personality)
+                ? Math.random() > 0.28
+                : ['Instável','Emotivo','Chorão'].includes(azarado.personality)
+                ? Math.random() > 0.88
+                : Math.random() > 0.65;
+            const motivo = isExpulsao ? rnd(kickReasons) : rnd(quitReasons);
+            const tipoEvento = isExpulsao ? "FOI EXPULSO(A)" : "DESISTIU";
+            const emoji = isExpulsao ? "🚨" : "😢";
+            const cls = isExpulsao ? "expulsao" : "desistencia";
+            narrativeExtra = `<div class="exit-banner ${cls}">${emoji} <b>${azarado.name} ${tipoEvento} DO PROGRAMA!</b><br>
+                <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${motivo}</span></div>`;
+            lastWeekExit = { name: azarado.name, tipo: tipoEvento, emoji, motivo, cls, week };
+            azarado.active = false;
+            while (azarado.history.length < week-1) azarado.history.push("-");
+            azarado.history.push("DES");
+            elimOrder.push(azarado);
+            exitsCounter++;
+            actives = participants.filter(p => p.active);
+            if (actives.length <= 3) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop3Final(actives); }
+            if (actives.length === 4) { document.getElementById('narrative-area').innerHTML = narrativeExtra; return runTop4Week(actives); }
+        }
     }
-}
 
     // ── Prova do Líder ──
     const provaLiderNome = rnd(provaLiderNames);
@@ -899,54 +1130,70 @@ function runWeek() {
     addLog(`🏋️ PROVA DO LÍDER: ${provaLiderNome}`, "info");
     addLog(`👑 LÍDER: ${lider.name} venceu a ${provaLiderNome}!`, "info");
 
-    // ── VIP/Xepa baseado em alianças do líder ──
     assignXepaVip(actives, lider);
-
-    // ── Opinião Pública ──
     updatePublicOpinion(actives);
-
-    // ── Dinâmicas de Grupo ──
     const gangLog = updateGroupDynamics(actives);
 
-    // ── Narrativa da semana ──
     let narrative = `<b>🍽️ VIP:</b> ${actives.filter(p=>p.isVip).map(p=>p.name).join(", ")} (${rnd(vipDescriptions)})<br>`;
     narrative += `<b>🥡 Xepa:</b> ${actives.filter(p=>!p.isVip).map(p=>p.name).join(", ")} (${rnd(xepaDescriptions)})<br><br>`;
     if (gangLog) narrative += gangLog + "<br><br>";
 
-    // Eventos orgânicos da casa (brigas/romances)
-    actives.forEach(p => {
-        if (Math.random() < 0.09) {
-            const target = rnd(actives.filter(o => o !== p));
-            if (!target) return;
-            if (Math.random() > 0.55) {
-                narrative += `🔥 <b>${p.name}</b> e <b>${target.name}</b> tiveram uma briga feia! `;
-                changeRelation(p, target.id, -30);
-                changeRelation(target, p.id, -30);
-            } else {
-                narrative += `💖 Clima de romance entre <b>${p.name}</b> e <b>${target.name}</b>! `;
-                changeRelation(p, target.id, 30);
-                changeRelation(target, p.id, 30);
+    // ── Sedutor: flerta ativamente com múltiplas pessoas ──
+    actives.filter(p => p.personality === 'Sedutor').forEach(sedutor => {
+        const compatibles = actives.filter(o => o !== sedutor && areRomanticallyCompatible(sedutor, o));
+        if (!compatibles.length) return;
+        const numTargets = Math.min(compatibles.length, 1 + Math.floor(Math.random() * 2));
+        const targets = [...compatibles].sort(() => 0.5 - Math.random()).slice(0, numTargets);
+        targets.forEach(target => {
+            narrative += `💋 <b>${sedutor.name}</b> flertou abertamente com <b>${target.name}</b>! `;
+            changeRelation(sedutor, target.id, 12 + Math.random()*10);
+            changeRelation(target, sedutor.id, 8 + Math.random()*8);
+        });
+        if (numTargets > 1) {
+            // ciúmes: alvos ficam com ciúme um do outro
+            for (let i=0;i<targets.length;i++) for (let j=i+1;j<targets.length;j++) {
+                changeRelation(targets[i], targets[j].id, -10);
+                changeRelation(targets[j], targets[i].id, -10);
             }
         }
     });
 
-    // ── Jogo da Discórdia ──
+    // Eventos orgânicos (personalidade influencia)
+    actives.forEach(p => {
+        const fChance = fightBias(p);
+        const rChance = romanceBias(p);
+        if (Math.random() < fChance + rChance) {
+            const isFight = Math.random() < (fChance / (fChance + rChance));
+            const compatibles = isFight
+                ? actives.filter(o => o !== p)
+                : actives.filter(o => o !== p && areRomanticallyCompatible(p, o));
+            const target = compatibles.length ? rnd(compatibles) : null;
+            if (!target) return;
+            if (isFight) {
+                narrative += `🔥 <b>${p.name}</b> (${p.personality}) e <b>${target.name}</b> tiveram uma briga feia! `;
+                changeRelation(p, target.id, -30); changeRelation(target, p.id, -30);
+            } else {
+                narrative += `💖 Clima de romance entre <b>${p.name}</b> e <b>${target.name}</b>! `;
+                changeRelation(p, target.id, 30); changeRelation(target, p.id, 30);
+            }
+        }
+    });
+
     const discordiaHTML = runJogoDiscordia(actives);
+    const partyHTML = runParty(actives);
 
     document.getElementById('narrative-area').innerHTML = narrativeExtra +
         `<div class="narrative-box"><h3>📝 Narrativa da Semana ${week}</h3><p>${narrative}</p></div>` +
-        discordiaHTML;
+        discordiaHTML + partyHTML;
 
-    // Perdedor da prova (dinâmica prova-lider)
     const perdedorProva = [...actives].filter(p=>p!==lider)
         .sort((a,b)=>(b.rejection-a.rejection)+(Math.random()*10-5))[0];
 
-    // ── Anjo (só se não for TOP5) ──
+    // ── Anjo ──
     let anjo=null, alvoAnjo=null, isAuto=false;
     if (!isTop5) {
         const provaAnjoNome = rnd(provaAnjoNames);
         anjo = rnd(actives.filter(p=>p!==lider));
-        // TOP6: anjo SEMPRE autoimune, independente da config
         isAuto = isTop6 || document.getElementById('config-anjo').value === 'auto';
         const elegiveisImu = actives.filter(p=>p!==anjo&&p!==lider);
         if (isAuto) {
@@ -959,9 +1206,7 @@ function runWeek() {
         }
         addLog(`😇 PROVA DO ANJO: ${provaAnjoNome}`, "info");
         addLog(`👼 ANJO: ${anjo.name} (${isTop6 ? 'TOP 6 — Autoimune obrigatório!' : isAuto ? 'Autoimune' : 'Imunizou aliado '+alvoAnjo.name})`, "info");
-        if (isTop6) addLog(`⚠️ TOP 6 — Anjo é AUTOIMUNE. Todos os outros 4 vão ao Paredão!`, "info");
-
-        // Monstro: anjo coloca seu maior rival (apenas fora do TOP6)
+        if (isTop6) addLog(`⚠️ TOP 6 — Anjo é AUTOIMUNE. Todos os outros vão ao Paredão!`, "info");
         if (!isTop6) {
             const elegMonstro = actives.filter(p=>p!==anjo&&p!==alvoAnjo&&p!==lider);
             if (elegMonstro.length > 0) {
@@ -977,7 +1222,6 @@ function runWeek() {
         addLog(`⚠️ TOP 5 — Sem Anjo! Líder imune, os outros 4 vão TODOS ao Paredão!`, "info");
     }
 
-    // Pool elegível para paredão
     const imunizados = [lider, ...(alvoAnjo ? [alvoAnjo] : [])];
     let elegiveisVoto = actives.filter(p=>!imunizados.includes(p));
 
@@ -1014,19 +1258,19 @@ function runWeek() {
         addLog(`📋 Sem Dinâmica. A Casa indicará uma segunda pessoa.`,"info");
     }
 
-    // ── Votação da Casa (aliados não votam entre si, exceto traição 8%) ──
+    // ── Votação da Casa ──
     let votos = {}; let htmlVotos = "";
+    const weekVoteLog = []; // para voteHistory
     actives.forEach(p => {
         let alvosValidos = elegiveisVoto.filter(o=>o!==p);
         if (alvosValidos.length===0) alvosValidos = actives.filter(o=>o!==p);
         if (alvosValidos.length===0) return;
         let alvo;
-        const betrayal = Math.random() < 0.08;
+        const betrayal = Math.random() < betrayalBias(p);
         if (betrayal) {
             const allies = alvosValidos.filter(o=>(p.relations[o.id]||0)>15);
             alvo = allies.length>0 ? rnd(allies) : rnd(alvosValidos);
         } else {
-            // Solo/Muro são alvos prioritários (sem proteção de grupo)
             const nonAllies = alvosValidos.filter(o=>(p.relations[o.id]||0)<=10);
             const pool = nonAllies.length>0 ? nonAllies : alvosValidos;
             pool.sort((a,b)=>{
@@ -1037,17 +1281,17 @@ function runWeek() {
             alvo = pool[0];
         }
         votos[alvo.name] = (votos[alvo.name]||0)+1;
+        weekVoteLog.push({ voterName: p.name, targetName: alvo.name, betrayal });
         htmlVotos += `<div><b>${p.name}</b> vota em <b>${alvo.name}</b>${betrayal?' <span style="color:#e91e8c;font-size:0.8em">⚠️ traição!</span>':''}.<span class="confessionary-text">${getConfessionalPhrase(p,alvo)}</span></div>`;
     });
     document.getElementById('votos-lista').innerHTML = htmlVotos;
 
-    // ── Formação do Paredão (mínimo 4) ──
+    // ── Formação do Paredão ──
     let indicados = [];
     function pickFromPool() {
         let pool = elegiveisVoto.filter(p=>!indicados.includes(p));
         if (pool.length===0) pool = actives.filter(p=>p!==lider&&!indicados.includes(p));
         if (pool.length===0) pool = actives.filter(p=>!indicados.includes(p));
-        // Prefere Solo/Muro na falta de rivais
         const vuln = pool.filter(p=>p.gang===GANG_SOLO||p.gang===GANG_MURO);
         return vuln.length>0 ? rnd(vuln) : (pool.length>0 ? rnd(pool) : null);
     }
@@ -1058,7 +1302,6 @@ function runWeek() {
 
     if (dinamicaPessoa) addIndicado(dinamicaPessoa);
 
-    // Líder indica seu maior rival/não-aliado (solo e muro são alvos preferidos)
     let liderPool = elegiveisVoto.filter(p=>!indicados.includes(p));
     if (liderPool.length===0) liderPool = actives.filter(p=>p!==lider&&!indicados.includes(p));
     liderPool.sort((a,b)=>{
@@ -1069,20 +1312,55 @@ function runWeek() {
     const indLid = liderPool[0] || pickFromPool();
     if (addIndicado(indLid)) addLog(`📍 LÍDER: Indicou ${indLid.name} ao Paredão.`);
 
+    // ── Votação da casa com detecção de EMPATE ──
     const sortedV = Object.keys(votos).sort((a,b)=>votos[b]-votos[a]);
     let pCasa1 = null;
-    for (const nome of sortedV) {
-        const cand = participants.find(x=>x.name===nome&&x.active&&!indicados.find(i=>i.id===x.id));
-        if (cand) { pCasa1=cand; break; }
+    let houveEmpate = false;
+
+    if (sortedV.length > 0) {
+        const maxVotos = votos[sortedV[0]];
+        // Candidatos com a maior votação que não estão no paredão
+        const empatePool = sortedV.filter(nome => {
+            return votos[nome] === maxVotos &&
+                participants.find(x=>x.name===nome&&x.active&&!indicados.find(i=>i.id===x.id));
+        });
+        if (empatePool.length > 1) {
+            houveEmpate = true;
+            const sorteadoNome = rnd(empatePool);
+            pCasa1 = participants.find(x=>x.name===sorteadoNome&&x.active);
+            addLog(`⚖️ EMPATE NA VOTAÇÃO com ${maxVotos} votos! Sorteio decidiu: ${pCasa1.name}!`, "danger");
+        } else {
+            for (const nome of sortedV) {
+                const cand = participants.find(x=>x.name===nome&&x.active&&!indicados.find(i=>i.id===x.id));
+                if (cand) { pCasa1=cand; break; }
+            }
+        }
     }
     if (!pCasa1) pCasa1=pickFromPool();
-    if (addIndicado(pCasa1)) addLog(`🗳️ CASA: ${pCasa1.name} foi o(a) mais votado(a) (${votos[pCasa1.name]||'?'} votos).`);
+    if (addIndicado(pCasa1)) {
+        if (houveEmpate) {
+            addLog(`🎲 SORTEIO: ${pCasa1.name} foi sorteado(a) pelo empate na votação.`);
+        } else {
+            addLog(`🗳️ CASA: ${pCasa1.name} foi o(a) mais votado(a) (${votos[pCasa1.name]||'?'} votos).`);
+        }
+    }
 
     if (dinamicaCfg==='nenhum') {
         let pCasa2=null;
-        for (let i=1;i<sortedV.length;i++) {
-            const cand = participants.find(x=>x.name===sortedV[i]&&x.active&&!indicados.find(ind=>ind.id===x.id));
-            if (cand) { pCasa2=cand; break; }
+        // Segunda votação também com empate
+        const sortedV2 = sortedV.filter(nome => {
+            return participants.find(x=>x.name===nome&&x.active&&!indicados.find(ind=>ind.id===x.id));
+        });
+        if (sortedV2.length > 1) {
+            const maxV2 = votos[sortedV2[0]];
+            const empate2 = sortedV2.filter(n => votos[n] === maxV2);
+            if (empate2.length > 1) {
+                const sorteado2 = rnd(empate2);
+                pCasa2 = participants.find(x=>x.name===sorteado2&&x.active&&!indicados.find(ind=>ind.id===x.id));
+                if (pCasa2) addLog(`⚖️ EMPATE na 2ª votação! Sorteio: ${pCasa2.name}!`, "danger");
+            } else {
+                pCasa2 = participants.find(x=>x.name===sortedV2[0]&&x.active&&!indicados.find(ind=>ind.id===x.id));
+            }
         }
         if (!pCasa2) pCasa2=pickFromPool();
         if (addIndicado(pCasa2)) addLog(`🗳️ CASA (extra): ${pCasa2.name} foi o(a) segundo(a) mais votado(a).`);
@@ -1094,11 +1372,9 @@ function runWeek() {
         addLog(`🔄 CONTRAGOLPE: ${indLid?.name||'Líder'} puxou ${extra.name}.`);
     }
 
-    // ── Prova Bate e Volta ──
-    // Indicado do Líder vai DIRETO ao Paredão — NUNCA disputa o Bate e Volta
+    // ── Bate e Volta ──
     const bvParticipantes = indicados.filter(p => !indLid || p !== indLid);
-    if (indLid) addLog(`🚫 ${indLid.name} foi indicado(a) pelo Líder → vai DIRETO ao Paredão, fora do Bate e Volta!`, "danger");
-
+    if (indLid) addLog(`🚫 ${indLid.name} foi indicado(a) pelo Líder → vai DIRETO ao Paredão!`, "danger");
     let salvo = null;
     if (bvParticipantes.length > 0) {
         addLog(`⚡ BATE E VOLTA: ${bvParticipantes.map(p=>p.name).join(' × ')} disputam!`, "info");
@@ -1108,36 +1384,32 @@ function runWeek() {
         for (let i=0;i<bvWeights.length;i++) { cumul+=bvWeights[i]; if(rand<=cumul){salvoIdx=i;break;} }
         salvo = bvParticipantes[salvoIdx];
         addLog(`🎉 BATE E VOLTA: ${salvo.name} SE SALVOU!`, "info");
-    } else {
-        addLog(`⚠️ Sem outros participantes para o Bate e Volta.`, "info");
     }
 
     const paredaoFinal = indicados.filter(p=>p!==salvo);
     addLog(`🔴 PAREDÃO: ${paredaoFinal.map(p=>p.name).join(' × ')}`, "danger");
-
+    // Salva histórico de votação desta semana
+    voteHistory.push({ week, votes: weekVoteLog, paredaoNomes: paredaoFinal.map(p=>p.name) });
     processElim(paredaoFinal, lider, anjo, alvoAnjo, isAuto, salvo);
 }
 
 // ══════════════════════════════════════════════════════
-// PROCESS ELIM — semanas normais
+// PROCESS ELIM
 // ══════════════════════════════════════════════════════
 function processElim(indicados, lider, anjo, alvoAnjo, isAuto, salvo) {
-    // Aplica influência do favorito e vilão nos scores
     const scores = indicados.map(p => {
         let score = (p.rejection * 2) - p.popularity + (Math.random() * 50);
-        if (p.id === publicFavoriteId) score -= 40; // favorito é muito menos votado
-        if (p.id === publicVillainId)  score += 35; // vilão é muito mais votado
-        // Solo e Muro são mais vulneráveis
+        if (p.id === publicFavoriteId) score -= 40;
+        if (p.id === publicVillainId)  score += 35;
         if (p.gang === GANG_SOLO || p.gang === GANG_MURO) score += 15;
         return { p, score };
     });
     scores.sort((a,b) => b.score - a.score);
 
-    // ── PAREDÃO FALSO ──
+    // ── PAREDÃO FALSO ── (reusável: apenas checa o checkbox)
     const manualFake = document.getElementById('check-fake-paredao')?.checked;
-    if (manualFake) document.getElementById('check-fake-paredao').checked = false;
-    const isFakeParedao = !fakeParedaoUsed && (manualFake || (week === fakeParedaoWeek && fakeParedaoWeek > 0));
-    if (isFakeParedao) {
+    if (manualFake) {
+        document.getElementById('check-fake-paredao').checked = false;
         runFakeParedao(scores, indicados, lider, anjo, alvoAnjo, isAuto, salvo);
         return;
     }
@@ -1153,36 +1425,27 @@ function processElim(indicados, lider, anjo, alvoAnjo, isAuto, salvo) {
     addLog(`🛑 MOTIVO: ${rnd(elimReasons)}`, "info");
 
     const elim = participants.find(p=>p.name===scores[0].p.name);
-
     participants.forEach(p => {
         if (!p.active) { if (p.history.length<week) p.history.push("-"); return; }
-        if (p===elim)              p.history.push(`ELIM ${p1}%`);
-        else if (p===lider)        p.history.push("LID");
+        if (p===elim)                    p.history.push(`ELIM ${p1}%`);
+        else if (p===lider)              p.history.push("LID");
         else if (alvoAnjo&&p===alvoAnjo) p.history.push("IMU");
-        else if (anjo&&p===anjo&&!isAuto) p.history.push("ANJO");
-        else if (p===salvo)        p.history.push("SALVO");
-        else if (indicados.includes(p)) p.history.push("PAR");
-        else                       p.history.push("SAFE");
+        else if (anjo&&p===anjo&&!isAuto)p.history.push("ANJO");
+        else if (p===salvo)              p.history.push("SALVO");
+        else if (indicados.includes(p))  p.history.push("PAR");
+        else                             p.history.push("SAFE");
     });
-
     elim.active = false;
     elimOrder.push(elim);
     showSummary();
 }
 
 // ══════════════════════════════════════════════════════
-// PAREDÃO FALSO
+// PAREDÃO FALSO (reusável)
 // ══════════════════════════════════════════════════════
 function runFakeParedao(scores, indicados, lider, anjo, alvoAnjo, isAuto, salvo) {
-    fakeParedaoUsed = true;
-    // Paredão falso: público vota pra SALVAR seu favorito
-    // No paredão falso o público vota normalmente para ELIMINAR.
-    // Quem receber a MAIOR % é o "eliminado" — mas na verdade retorna!
-    // scores já está ordenado DECRESCENTE por rejeição → scores[0] = mais rejeitado = vitima
-    const vitima = scores[0].p;
-    fakeParedaoVitima = vitima;
-
-    // Usa generateElimPcts diretamente: scores[0] (vitima) recebe a MAIOR porcentagem
+    fakeParedaoVitima = scores[0].p;
+    const vitima = fakeParedaoVitima;
     const { p1: elimPct, survivorPcts } = generateElimPcts(scores);
     const allPcts = [elimPct, ...survivorPcts];
 
@@ -1192,24 +1455,21 @@ function runFakeParedao(scores, indicados, lider, anjo, alvoAnjo, isAuto, salvo)
             <small style="font-weight:normal;font-size:0.75em">O público vota para ELIMINAR — mas ninguém sai de verdade! Quem receber MAIS votos é o "eliminado" e RETORNA amanhã! 🎭</small>
         </div>`;
 
-    addLog(`🎭 PAREDÃO FALSO ATIVADO! O público votou normalmente...`, "info");
+    addLog(`🎭 PAREDÃO FALSO ATIVADO!`, "info");
     addLog(`📊 RESULTADO: ${vitima.name} foi "eliminado(a)" com ${elimPct}% dos votos!`, "danger");
     scores.slice(1).forEach((s, i) => addLog(`✅ ${s.p.name} permanece com ${allPcts[i+1]}%.`));
     addLog(`😱 ${vitima.name} APARENTEMENTE ELIMINADO(A)!... mas É UM PAREDÃO FALSO — RETORNA AMANHÃ! 🎭`, "info");
 
-    // Vitima continua ativa — paredão falso
     participants.forEach(p => {
         if (!p.active) { if (p.history.length<week) p.history.push("-"); return; }
-        if (p===vitima)             p.history.push(`ELIM ${elimPct}%`); // aparece como ELIM na tabela
-        else if (p===lider)         p.history.push("LID");
+        if (p===vitima)                  p.history.push(`ELIM ${elimPct}%`);
+        else if (p===lider)              p.history.push("LID");
         else if (alvoAnjo&&p===alvoAnjo) p.history.push("IMU");
-        else if (anjo&&p===anjo&&!isAuto) p.history.push("ANJO");
-        else if (p===salvo)         p.history.push("SALVO");
-        else if (indicados.includes(p)) p.history.push("PAR");
-        else                        p.history.push("SAFE");
+        else if (anjo&&p===anjo&&!isAuto)p.history.push("ANJO");
+        else if (p===salvo)              p.history.push("SALVO");
+        else if (indicados.includes(p))  p.history.push("PAR");
+        else                             p.history.push("SAFE");
     });
-    // vitima continua ativa! (paredão falso)
-
     showSummary();
 }
 
@@ -1280,54 +1540,59 @@ function runTop4Week(actives) {
 }
 
 // ══════════════════════════════════════════════════════
-// TOP 3 — GRANDE FINAL
+// TOP 3 — GRANDE FINAL (porcentagens corrigidas)
 // ══════════════════════════════════════════════════════
 function runTop3Final(actives) {
     actives = participants.filter(p=>p.active);
     document.getElementById('page-sim').classList.remove('active');
     document.getElementById('page-final').classList.add('active');
 
-    const sorted = [...actives].sort((a,b)=>(b.popularity+Math.random()*10)-(a.popularity+Math.random()*10));
-    const vencedor=sorted[0], segundo=sorted[1], terceiro=sorted[2];
-
-    // Favorito da edição tem vantagem na final
-    if (vencedor.id !== publicFavoriteId) {
-        const fav = actives.find(p=>p.id===publicFavoriteId);
-        if (fav && Math.random() < 0.6) { // 60% de chance do favorito ganhar a final
-            sorted.sort((a,b) => (b.id===publicFavoriteId?1:0)-(a.id===publicFavoriteId?1:0));
-        }
-    }
-
+    // Score: mais popular → mais votos para ganhar
     const scores3 = [...actives].map(p => {
         let s = p.popularity + (Math.random()*15);
-        if (p.id===publicFavoriteId) s += 30;
-        if (p.id===publicVillainId)  s -= 20;
-        return {p,s};
+        if (p.id===publicFavoriteId) s += 35;
+        if (p.id===publicVillainId)  s -= 25;
+        return {p, s};
     });
     scores3.sort((a,b)=>b.s-a.s);
-    const finalVencedor=scores3[0].p, finalSegundo=scores3[1]?.p, finalTerceiro=scores3[2]?.p;
 
-    // Porcentagens da final (favorito sempre mais)
-    let pct1 = parseFloat((35+Math.random()*35).toFixed(2));
-    const rem=100-pct1;
-    let pct2 = parseFloat((rem*(0.4+Math.random()*0.3)).toFixed(2));
-    let pct3 = parseFloat((100-pct1-pct2).toFixed(2));
+    const finalVencedor = scores3[0].p;
+    const finalSegundo  = scores3[1]?.p;
+    const finalTerceiro = scores3[2]?.p;
 
-    document.getElementById('winner-name').innerText = finalVencedor.name;
-    const favTag = finalVencedor.id===publicFavoriteId ? ' 🌟 Favorito(a) da edição!' : '';
+    const isFav = finalVencedor.id === publicFavoriteId;
+    const isVil = finalVencedor.id === publicVillainId;
+    const { p1, p2, p3, mode } = generateFinalPcts(isFav, isVil);
+
+    // Garantia final de ordem correta
+    const sorted = [[p1,finalVencedor],[p2,finalSegundo],[p3,finalTerceiro]]
+        .sort((a,b) => b[0]-a[0]);
+    const [pct1, win] = sorted[0];
+    const [pct2, seg] = sorted[1];
+    const [pct3, ter] = sorted[2];
+
+    let modeMsg = '';
+    if (mode === 'landslide') modeMsg = ` <span style="color:#fda085">🔥 Vitória com folga!</span>`;
+    else if (mode === 'tight') modeMsg = ` <span style="color:#a29bfe">⚡ Final acirradíssima!</span>`;
+
+    document.getElementById('winner-name').innerText = win.name;
+    const favTag = win.id===publicFavoriteId ? ' 🌟 Favorito(a) da edição!' : '';
     document.getElementById('final-podium').innerHTML = `
-        <div style="margin-bottom:10px;font-size:1.1em;opacity:0.8">Resultado da votação final</div>
-        <div>🥇 <b>${finalVencedor.name}</b> — ${pct1}% 🏆${favTag}</div>
-        <div style="margin-top:8px">🥈 ${finalSegundo?.name||''} — ${pct2}%</div>
-        ${finalTerceiro?`<div style="margin-top:8px">🥉 ${finalTerceiro.name} — ${pct3}%</div>`:''}`;
+        <div style="margin-bottom:10px;font-size:1.1em;opacity:0.8">Resultado da votação final${modeMsg}</div>
+        <div>🥇 <b>${win.name}</b> — ${pct1}% 🏆${favTag}</div>
+        <div style="margin-top:8px">🥈 ${seg?.name||''} — ${pct2}%</div>
+        ${ter?`<div style="margin-top:8px">🥉 ${ter.name} — ${pct3}%</div>`:''}`;
 
+    // Atribui histórico
     actives.forEach(p => {
-        if (p===finalVencedor) { p.finalPct=pct1; p.history.push("WIN"); }
-        else if (p===finalSegundo) { p.finalPct=pct2; p.history.push("FIN"); }
-        else if (p===finalTerceiro) { p.finalPct=pct3; p.history.push("FIN"); }
-        else p.history.push("FIN");
+        if (p===win)     { p.finalPct=pct1; p.history.push("WIN"); }
+        else if (p===seg){ p.finalPct=pct2; p.history.push("FIN"); }
+        else if (p===ter){ p.finalPct=pct3; p.history.push("FIN"); }
+        else              p.history.push("FIN");
     });
     renderTableFinal('final-table-container');
+    renderSeasonStats();
+    renderVoteHistoryTable();
 }
 
 // ══════════════════════════════════════════════════════
@@ -1342,7 +1607,6 @@ function showSummary() {
     container.innerHTML = "";
     const actives = participants.filter(p=>p.active);
 
-    // ── Expulsão/Desistência ──
     if (lastWeekExit) {
         const ex = lastWeekExit;
         container.innerHTML += `<div class="exit-banner ${ex.cls}" style="margin-bottom:15px">
@@ -1350,24 +1614,22 @@ function showSummary() {
             <span style="opacity:0.9;font-size:0.92em;margin-top:6px;display:block;">📋 ${ex.motivo}</span></div>`;
     }
 
-    // ── Paredão Falso ──
-    if (fakeParedaoVitima && fakeParedaoUsed && participants.find(p=>p.id===fakeParedaoVitima.id&&p.active)) {
+    if (fakeParedaoVitima && participants.find(p=>p.id===fakeParedaoVitima.id&&p.active)) {
         container.innerHTML += `<div class="fake-paredao-banner">
             🎭 PAREDÃO FALSO! <b>${fakeParedaoVitima.name}</b> foi "eliminado(a)" mas RETORNA ao programa na próxima semana! 🎭</div>`;
     }
 
-    // ── Favorito & Vilão ──
     const fav = actives.find(p=>p.id===publicFavoriteId);
     const vil = actives.find(p=>p.id===publicVillainId);
     if (fav||vil) {
         let favHTML = `<div class="alliance-section"><h4 class="favor-title">📊 Opinião Pública</h4><div class="alliance-grid">`;
-        if (fav) favHTML += `<div class="alliance-card fav-card">🌟 <b>Favorito(a) da Edição:</b><br>${fav.name}${favChangedWeek===week?' <span style="color:#27ae60;font-size:0.8em">👈 VIROU!</span>':''}</div>`;
-        if (vil) favHTML += `<div class="alliance-card vil-card">😈 <b>Vilão(ã) da Edição:</b><br>${vil.name}${vilChangedWeek===week?' <span style="color:#8e44ad;font-size:0.8em">👈 NOVO!</span>':''}</div>`;
+        if (fav) favHTML += `<div class="alliance-card fav-card">🌟 <b>Favorito(a):</b> ${fav.name}${favChangedWeek===week?' <span style="color:#27ae60;font-size:0.8em">👈 VIROU!</span>':''}<br><small style="color:#888">${sexualityLabels[fav.sexuality]||''} • ${genderLabels[fav.gender]||''} • ${fav.personality}</small></div>`;
+        if (vil) favHTML += `<div class="alliance-card vil-card">😈 <b>Vilão(ã):</b> ${vil.name}${vilChangedWeek===week?' <span style="color:#8e44ad;font-size:0.8em">👈 NOVO!</span>':''}<br><small style="color:#888">${fav&&vil?vil.personality:''}</small></div>`;
         favHTML += `</div></div>`;
         container.innerHTML += favHTML;
     }
 
-    // ── Grupos da Casa ──
+    // ── Grupos ──
     const gangActive = [...new Set(actives.filter(p=>p.gang>=0).map(p=>p.gang))];
     const solos = actives.filter(p=>p.gang===GANG_SOLO);
     const muros = actives.filter(p=>p.gang===GANG_MURO);
@@ -1381,12 +1643,10 @@ function showSummary() {
                 <b style="color:${color}">${gangPool[gIdx]}</b> (${members.length})<br>
                 <span style="font-size:0.88em">${members.map(p=>p.name).join(', ')}</span></div>`;
         });
-        if (solos.length) gangsHTML += `<div class="alliance-card solo-card">🎯 <b>Joga Solo:</b><br>
-            <span style="font-size:0.88em">${solos.map(p=>p.name).join(', ')}</span>
-            <small style="color:#e17055;display:block;margin-top:4px">⚠️ Sem proteção — alvos fáceis</small></div>`;
-        if (muros.length) gangsHTML += `<div class="alliance-card muro-card">🪨 <b>Em Cima do Muro:</b><br>
-            <span style="font-size:0.88em">${muros.map(p=>p.name).join(', ')}</span>
-            <small style="color:#636e72;display:block;margin-top:4px">⚠️ Sem aliados firmes — vulneráveis</small></div>`;
+        if (solos.length) gangsHTML += `<div class="alliance-card solo-card">🎯 <b>Joga Solo:</b><br><span style="font-size:0.88em">${solos.map(p=>p.name).join(', ')}</span>
+            <small style="color:#e17055;display:block;margin-top:4px">⚠️ Sem proteção</small></div>`;
+        if (muros.length) gangsHTML += `<div class="alliance-card muro-card">🪨 <b>Em Cima do Muro:</b><br><span style="font-size:0.88em">${muros.map(p=>p.name).join(', ')}</span>
+            <small style="color:#636e72;display:block;margin-top:4px">⚠️ Sem aliados firmes</small></div>`;
         gangsHTML += `</div></div>`;
         container.innerHTML += gangsHTML;
     }
@@ -1402,11 +1662,18 @@ function showSummary() {
     xvHTML += `</div></div>`;
     container.innerHTML += xvHTML;
 
-    // ── Romances (persistem — threshold 35) ──
+    // ── Romances (com compatibilidade) ──
     const romancePairs = [];
     actives.forEach(p => {
         actives.forEach(o => {
-            if (o.id>p.id && (p.relations[o.id]||0)>35) romancePairs.push(`💕 ${p.name} & ${o.name}`);
+            if (o.id>p.id && (p.relations[o.id]||0)>35 && areRomanticallyCompatible(p,o)) {
+                const sameMasc = isMasc(p.gender) && isMasc(o.gender);
+                const sameFem  = isFem(p.gender)  && isFem(o.gender);
+                let relLabel = '';
+                if (p.sexuality==='bi' || o.sexuality==='bi') relLabel = '<small style="color:#e91e8c"> (bi)</small>';
+                else if (sameMasc || sameFem) relLabel = '<small style="color:#e91e8c"> (LGBT)</small>';
+                romancePairs.push(`💕 ${p.name} & ${o.name}${relLabel}`);
+            }
         });
     });
     if (romancePairs.length>0) {
@@ -1414,11 +1681,11 @@ function showSummary() {
             <div class="alliance-grid">${romancePairs.map(r=>`<div class="alliance-card romance">${r}</div>`).join('')}</div></div>`;
     }
 
-    // ── Rivalidades (persistem — threshold -35) ──
+    // ── Rivalidades ──
     const rivalPairs = [];
     actives.forEach(p => {
         actives.forEach(o => {
-            if (o.id>p.id && (p.relations[o.id]||0)<-35) rivalPairs.push(`⚔️ ${p.name} vs ${o.name}`);
+            if (o.id>p.id && (p.relations[o.id]||0)<-35) rivalPairs.push(`⚔️ ${p.name} (${p.personality}) vs ${o.name} (${o.personality})`);
         });
     });
     if (rivalPairs.length>0) {
@@ -1428,6 +1695,16 @@ function showSummary() {
 
     updateBadges();
     renderTable('live-table-container');
+    // Botão salvar histórico semanal como imagem
+    const liveContainer = document.getElementById('live-table-container');
+    if (liveContainer && !document.getElementById('btn-save-img')) {
+        const btnImg = document.createElement('button');
+        btnImg.id = 'btn-save-img';
+        btnImg.innerHTML = '📸 Salvar Histórico como Imagem';
+        btnImg.style.cssText = 'background:#6c5ce7;margin-top:10px;width:100%;';
+        btnImg.onclick = saveHistoryImage;
+        liveContainer.after(btnImg);
+    }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1444,26 +1721,144 @@ function updateBadges() {
 }
 
 function renderTable(id) {
-    const sorted = [...participants.filter(p=>p.active), ...[...elimOrder].reverse()];
+    const vidroElimList = elimOrder.filter(p => p.eliminatedByVidro);
+    const regularElim   = elimOrder.filter(p => !p.eliminatedByVidro);
+    const sorted = [...participants.filter(p=>p.active), ...[...regularElim].reverse()];
     let h = `<table><tr><th>Participante</th>`;
     for (let i=1;i<=week;i++) h+=`<th>S${i}</th>`;
     h+=`</tr>`;
     sorted.forEach(p => {
-        h+=`<tr><td class="name-cell border-${p.group}">${p.name}</td>`;
+        h+=`<tr><td class="name-cell border-${p.group.replace(/ /g,'-')}">${p.name}<br><small style="font-weight:normal;color:#888">${p.group}</small></td>`;
         p.history.forEach(s => h+=`<td class="st-${s.split(' ')[0]}">${s}</td>`);
         h+=`</tr>`;
     });
+    if (vidroElimList.length) {
+        h += `<tr><td colspan="${week+1}" style="background:#e8fdf9;color:#00796b;font-size:0.82em;padding:6px 10px;font-style:italic;border-top:2px solid #00b894">`+
+             `❌ <b>Eliminados na Casa de Vidro (nunca entraram):</b> ${vidroElimList.map(p=>p.name).join(', ')}</td></tr>`;
+    }
     document.getElementById(id).innerHTML = h+"</table>";
 }
 
+// ══════════════════════════════════════════════════════
+// ESTATÍSTICAS DA TEMPORADA
+// ══════════════════════════════════════════════════════
+function renderSeasonStats() {
+    const all = participants;
+    function countStatus(p, code) {
+        return p.history.filter(s => s.startsWith(code)).length;
+    }
+
+    // Mais vezes no paredão
+    const paredaoRank = [...all].sort((a,b) => countStatus(b,'PAR') - countStatus(a,'PAR'));
+    // Mais vezes líder
+    const liderRank = [...all].sort((a,b) => countStatus(b,'LID') - countStatus(a,'LID'));
+    // Mais vezes anjo
+    const anjoRank = [...all].sort((a,b) => countStatus(b,'ANJO') - countStatus(a,'ANJO'));
+    // Mais imunizado
+    const imuRank = [...all].sort((a,b) => countStatus(b,'IMU') - countStatus(a,'IMU'));
+    // Mais salvo no B&V
+    const salvoRank = [...all].sort((a,b) => countStatus(b,'SALVO') - countStatus(a,'SALVO'));
+    // Maior rejeição (eliminado com maior %)
+    const elimsWithPct = all.filter(p => p.history.some(s => s.startsWith('ELIM'))).map(p => {
+        const elimEntry = p.history.find(s => s.startsWith('ELIM'));
+        const pct = elimEntry ? parseFloat(elimEntry.replace('ELIM ','').replace('%','')) : 0;
+        return { p, pct };
+    }).sort((a,b) => b.pct - a.pct);
+    // Semanas dentro (ativas)
+    const semanasDentro = [...all].sort((a,b) => b.history.length - a.history.length);
+
+    const statRows = [
+        { emoji:'🔴', label:'Mais vezes no Paredão', person: paredaoRank[0], value: countStatus(paredaoRank[0],'PAR')+' vezes' },
+        { emoji:'👑', label:'Mais vezes Líder', person: liderRank[0], value: countStatus(liderRank[0],'LID')+' vezes' },
+        { emoji:'😇', label:'Mais vezes Anjo', person: anjoRank[0], value: countStatus(anjoRank[0],'ANJO')+' vezes' },
+        { emoji:'🛡️', label:'Mais vezes Imunizado(a)', person: imuRank[0], value: countStatus(imuRank[0],'IMU')+' vezes' },
+        { emoji:'🎯', label:'Mais vezes Salvo(a) no B&V', person: salvoRank[0], value: countStatus(salvoRank[0],'SALVO')+' vezes' },
+        { emoji:'💀', label:'Maior Rejeição (% eliminação)', person: elimsWithPct[0]?.p, value: elimsWithPct[0] ? elimsWithPct[0].pct.toFixed(2)+'%' : '-' },
+        { emoji:'🏠', label:'Mais semanas na casa', person: semanasDentro[0], value: semanasDentro[0].history.length+' semanas' },
+    ];
+
+    let html = `<div class="card" style="margin-top:25px;">
+        <h3>📊 Estatísticas da Temporada</h3>
+        <table style="font-size:13px">
+            <tr style="background:#f8f8f8"><th style="text-align:left;padding:8px">Estatística</th><th>Participante</th><th>Valor</th></tr>`;
+    statRows.forEach(r => {
+        if (!r.person) return;
+        html += `<tr>
+            <td style="text-align:left;padding:8px;font-weight:bold">${r.emoji} ${r.label}</td>
+            <td style="font-weight:bold;color:#2d3436">${r.person.name}</td>
+            <td style="color:#6c5ce7;font-weight:bold">${r.value}</td>
+        </tr>`;
+    });
+    html += `</table></div>`;
+
+    const container = document.querySelector('#page-final .card');
+    if (container) container.insertAdjacentHTML('beforeend', html);
+}
+
+// ══════════════════════════════════════════════════════
+// HISTÓRICO DE VOTAÇÃO POR SEMANA
+// ══════════════════════════════════════════════════════
+function renderVoteHistoryTable() {
+    if (!voteHistory.length) return;
+
+    let html = `<div class="card" style="margin-top:20px;">
+        <h3>🗳️ Histórico de Votação por Semana</h3>`;
+
+    voteHistory.forEach(entry => {
+        // Conta votos desta semana
+        const voteCount = {};
+        entry.votes.forEach(v => { voteCount[v.targetName] = (voteCount[v.targetName]||0)+1; });
+        // Pega os mais votados (que foram ao paredão)
+        const paredaoSet = new Set(entry.paredaoNomes);
+        // Pega os top votados para destacar
+        const maxVotos = Math.max(...Object.values(voteCount));
+        const maisVotados = new Set(Object.keys(voteCount).filter(n => voteCount[n] === maxVotos));
+
+        html += `<div style="margin-bottom:16px">
+            <div style="font-weight:bold;font-size:1em;padding:8px 12px;background:linear-gradient(135deg,#2d3436,#636e72);color:white;border-radius:6px 6px 0 0">📅 Semana ${entry.week}</div>
+            <table style="font-size:12px;margin-top:0;border-radius:0 0 6px 6px;overflow:hidden">
+                <tr style="background:#f0f0f0"><th style="text-align:left;padding:6px 10px">Quem votou</th><th>Votou em</th><th>Nº votos recebidos</th></tr>`;
+
+        entry.votes.forEach(v => {
+            const noParedao = paredaoSet.has(v.targetName);
+            const maisVotado = maisVotados.has(v.targetName);
+            const bgVoter = '';
+            const bgTarget = noParedao
+                ? (maisVotado ? 'background:#ff4757;color:white;font-weight:bold' : 'background:#ffa502;color:white;font-weight:bold')
+                : '';
+            html += `<tr>
+                <td style="text-align:left;padding:5px 10px">${v.voterName}${v.betrayal?' <span title="traição" style="color:#e91e8c">⚠️</span>':''}</td>
+                <td style="${bgTarget};padding:5px 8px;border-radius:4px">${v.targetName}</td>
+                <td style="color:#636e72">${voteCount[v.targetName]||0}x</td>
+            </tr>`;
+        });
+
+        html += `</table>
+            <div style="font-size:0.8em;margin-top:4px;color:#636e72;padding:0 4px">`;
+        if (maisVotados.size) html += `🔴 <b>Mais votado(a):</b> ${[...maisVotados].join(', ')} | `;
+        if (paredaoSet.size) html += `🔴 <b>Paredão:</b> ${[...paredaoSet].join(', ')}`;
+        html += `</div></div>`;
+    });
+
+    html += `<div style="font-size:0.8em;color:#636e72;margin-top:6px;padding:4px">
+        <span style="background:#ff4757;color:white;padding:2px 7px;border-radius:4px;margin-right:6px">■</span> Mais votado(a) e foi ao paredão &nbsp;
+        <span style="background:#ffa502;color:white;padding:2px 7px;border-radius:4px;margin-right:6px">■</span> Foi ao paredão (não o mais votado)
+    </div></div>`;
+
+    const container = document.querySelector('#page-final .card');
+    if (container) container.insertAdjacentHTML('beforeend', html);
+}
+
 function renderTableFinal(id) {
-    const allSorted = [...participants.filter(p=>p.active).sort((a,b)=>b.popularity-a.popularity), ...[...elimOrder].reverse()];
-    const maxW = Math.max(...allSorted.map(p=>p.history.length));
+    const vidroElimList  = elimOrder.filter(p => p.eliminatedByVidro);
+    const regularElim    = elimOrder.filter(p => !p.eliminatedByVidro);
+    const allSorted = [...participants.filter(p=>p.active).sort((a,b)=>b.popularity-a.popularity), ...[...regularElim].reverse()];
+    const maxW = Math.max(week, ...allSorted.map(p=>p.history.length), 1);
     let h = `<table><tr><th>Participante</th>`;
     for (let i=1;i<=maxW;i++) h+=`<th>S${i}</th>`;
     h+=`</tr>`;
     allSorted.forEach(p => {
-        h+=`<tr><td class="name-cell border-${p.group}">${p.name}</td>`;
+        h+=`<tr><td class="name-cell border-${p.group.replace(/ /g,'-')}">${p.name}<br><small style="font-weight:normal;color:#888">${p.group}</small></td>`;
         p.history.forEach((s,idx) => {
             const isLast = idx===p.history.length-1;
             const sk = s.split(' ')[0];
@@ -1473,6 +1868,10 @@ function renderTableFinal(id) {
         });
         h+=`</tr>`;
     });
+    if (vidroElimList.length) {
+        h += `<tr><td colspan="${maxW+1}" style="background:#e8fdf9;color:#00796b;font-size:0.82em;padding:6px 10px;font-style:italic;border-top:2px solid #00b894">`+
+             `❌ <b>Eliminados na Casa de Vidro (nunca entraram):</b> ${vidroElimList.map(p=>p.name).join(', ')}</td></tr>`;
+    }
     document.getElementById(id).innerHTML = h+"</table>";
 }
 
@@ -1486,6 +1885,95 @@ function addLog(msg, type) {
 // ══════════════════════════════════════════════════════
 // PRÓXIMA SEMANA
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SALVAR COMO IMAGEM
+// ══════════════════════════════════════════════════════
+async function saveHistoryImage() {
+    const el = document.getElementById('live-table-container');
+    if (!el) return;
+    try {
+        const canvas = await html2canvas(el, { backgroundColor:'#ffffff', scale:2 });
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = `bbb26_historico_semana${week}.png`;
+        a.click();
+    } catch(e) { alert('Erro ao salvar imagem: ' + e.message); }
+}
+async function saveFinalHistoryImage() {
+    const el = document.getElementById('final-table-container');
+    if (!el) return;
+    try {
+        const canvas = await html2canvas(el, { backgroundColor:'#ffffff', scale:2 });
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = `bbb26_historico_final.png`;
+        a.click();
+    } catch(e) { alert('Erro ao salvar imagem: ' + e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// REPLAY COM MESMOS PARTICIPANTES
+// ══════════════════════════════════════════════════════
+function replayWithSameCast() {
+    const savedNames = participants.map(p => p.name).join(', ');
+    participants = [];
+    week = 1;
+    elimOrder = [];
+    exitsCounter = 0;
+    lastWeekExit = null;
+    publicFavoriteId = null;
+    publicVillainId = null;
+    fakeParedaoVitima = null;
+    activeGangIndices = [];
+    casaDeVidroActive = false;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-setup').classList.add('active');
+    document.getElementById('input-cast').value = savedNames;
+    document.getElementById('console').innerHTML = '';
+    document.getElementById('narrative-area').innerHTML = '';
+    document.getElementById('summary-area').style.display = 'none';
+    document.getElementById('votos-container').style.display = 'none';
+    const btnImg = document.getElementById('btn-save-img');
+    if (btnImg) btnImg.remove();
+}
+
+// ══════════════════════════════════════════════════════
+// BANCO DE ELENCOS (localStorage)
+// ══════════════════════════════════════════════════════
+function loadCastBank() {
+    const bank = JSON.parse(localStorage.getItem('bbb26_castBank') || '[]');
+    const div = document.getElementById('cast-bank-list');
+    if (!div) return;
+    if (!bank.length) { div.innerHTML = '<span style="color:#bbb;font-size:0.82em">Nenhum elenco salvo ainda.</span>'; return; }
+    div.innerHTML = bank.map((e,i) => `
+        <div class="bank-chip">
+            <span onclick="loadCastFromBank(${i})" title="Clique para carregar">📋 ${e.name}</span>
+            <button onclick="deleteCastFromBank(${i})" style="padding:1px 6px;font-size:0.75em;background:#ff4757;min-width:unset;">✕</button>
+        </div>`).join('');
+}
+function saveCastToBank() {
+    const names = document.getElementById('input-cast').value.trim();
+    if (!names) { alert('Escreva ou gere os nomes primeiro!'); return; }
+    const name = prompt('Nome para salvar este elenco (ex: BBB26 Famosos):');
+    if (!name) return;
+    const bank = JSON.parse(localStorage.getItem('bbb26_castBank') || '[]');
+    bank.push({ name, names });
+    localStorage.setItem('bbb26_castBank', JSON.stringify(bank));
+    loadCastBank();
+    alert(`Elenco "${name}" salvo com sucesso! ✅`);
+}
+function loadCastFromBank(idx) {
+    const bank = JSON.parse(localStorage.getItem('bbb26_castBank') || '[]');
+    if (bank[idx]) { document.getElementById('input-cast').value = bank[idx].names; }
+}
+function deleteCastFromBank(idx) {
+    if (!confirm('Remover este elenco?')) return;
+    const bank = JSON.parse(localStorage.getItem('bbb26_castBank') || '[]');
+    bank.splice(idx, 1);
+    localStorage.setItem('bbb26_castBank', JSON.stringify(bank));
+    loadCastBank();
+}
+
 function prepareNextWeek() {
     week++;
     document.getElementById('week-display').innerText = "Semana "+week;
@@ -1493,15 +1981,17 @@ function prepareNextWeek() {
     document.getElementById('votos-container').style.display = "none";
     document.getElementById('narrative-area').innerHTML = "";
 
-    // Paredão falso: apenas registra no log, SEM adicionar RET à tabela
-    if (fakeParedaoVitima && fakeParedaoUsed) {
+    if (fakeParedaoVitima) {
         const v = participants.find(p=>p.id===fakeParedaoVitima.id);
         if (v && v.active) {
             addLog(`🎭 ${v.name} RETORNOU AO PROGRAMA! O Paredão Falso foi revelado!`, "info");
-            fakeParedaoVitima = null; // reseta
         }
+        fakeParedaoVitima = null;
     }
 }
+
+// Inicializa banco de elencos ao carregar
+window.addEventListener('load', loadCastBank);
 </script>
 </body>
 </html>
